@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable no-undef */
-import { Ship, Cell } from './battleship';
+import { Ship, Cell, Gameboard } from './battleship';
 
 describe('Ship class', () => {
   describe('Length 1', () => {
@@ -134,6 +134,74 @@ describe('Cell class', () => {
       cell.place(ship);
       cell.hit();
       expect(cell.content.sunk).toBe(true);
+    });
+  });
+});
+
+describe('Gameboard class', () => {
+  let gameboard;
+  beforeEach(() => {
+    gameboard = new Gameboard();
+  });
+
+  describe('Board initialization', () => {
+    test('First cell exists', () => {
+      expect(gameboard.board[0][0]).toBeInstanceOf(Cell);
+    });
+    test('Last cell exists', () => {
+      expect(gameboard.board[9][9]).toBeInstanceOf(Cell);
+    });
+  });
+
+  describe('Placing ships', () => {
+    test('Can place ship of size 1', () => {
+      const ship = new Ship(1);
+      const ship2 = new Ship(1);
+      gameboard.placeShip(3, 3, ship);
+      gameboard.placeShip(8, 6, ship2);
+      expect(gameboard.board[3][3].content).toBe(ship);
+      expect(gameboard.board[8][6].content).toBe(ship2);
+    });
+
+    test('Can place ship of size 4 horizontally', () => {
+      const ship = new Ship(4);
+      gameboard.placeShip(3, 3, ship);
+      expect(gameboard.board[3][3].content).toBe(ship);
+      expect(gameboard.board[3][4].content).toBe(ship);
+      expect(gameboard.board[3][5].content).toBe(ship);
+      expect(gameboard.board[3][6].content).toBe(ship);
+      expect(gameboard.board[3][7].content).toBeUndefined();
+    });
+
+    test('Can place ship of size 4 vertically', () => {
+      const ship = new Ship(4);
+      gameboard.placeShip(3, 3, ship, false);
+      expect(gameboard.board[3][3].content).toBe(ship);
+      expect(gameboard.board[4][3].content).toBe(ship);
+      expect(gameboard.board[5][3].content).toBe(ship);
+      expect(gameboard.board[6][3].content).toBe(ship);
+      expect(gameboard.board[7][3].content).toBeUndefined();
+    });
+
+    test("Can't place ship out of bounds horizontally", () => {
+      const ship = new Ship(4);
+      expect(() => gameboard.placeShip(4, 8, ship)).toThrow();
+      expect(gameboard.board[4][8].content).toBeUndefined();
+    });
+
+    test("Can't place ship out of bounds vertically", () => {
+      const ship = new Ship(4);
+      expect(() => gameboard.placeShip(8, 4, ship, false)).toThrow();
+      expect(gameboard.board[8][4].content).toBeUndefined();
+    });
+
+    test("Can't place ship over another ship", () => {
+      const ship = new Ship(4);
+      const ship2 = new Ship(4);
+
+      gameboard.placeShip(4, 3, ship);
+      expect(() => gameboard.placeShip(2, 5, ship2, false)).toThrow();
+      expect(gameboard.board[2][5].content).toBeUndefined();
     });
   });
 });
