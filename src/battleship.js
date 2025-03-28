@@ -49,4 +49,76 @@ class Cell {
   }
 }
 
-export { Ship, Cell };
+class Gameboard {
+  constructor() {
+    this.board = this.initBoard(10);
+  }
+
+  initBoard(size) {
+    const board = [];
+    for (let i = 0; i < size; i++) {
+      const row = [];
+      for (let j = 0; j < size; j++) {
+        const cell = new Cell();
+        row.push(cell);
+      }
+      board.push(row);
+    }
+    return board;
+  }
+
+  placeShip(y, x, ship, isHorizontal = true) {
+    const targetCells = [];
+
+    let coordY = y;
+    let coordX = x;
+
+    for (let i = 0; i < ship.length; i++) {
+      const cell = this.board[coordY][coordX];
+
+      if (!cell) {
+        throw new Error('Cell out of bounds');
+      } else if (cell.content) {
+        throw new Error("Can't place ship over another ship");
+      }
+
+      targetCells.push(cell);
+
+      if (isHorizontal) {
+        coordX++;
+      } else {
+        coordY++;
+      }
+    }
+
+    if (targetCells.length === ship.length) {
+      targetCells.forEach((cell) => cell.place(ship));
+    }
+  }
+}
+
+/* 
+class Gameboard
+  constructor
+    board = initBoard
+
+  placeShip(y, x, ship, isHorizontal def true)
+    variable target cells is empty array
+    for loop that runs ship size times
+      try
+        if direction is horizontal add those cells to target cells
+        if direction is vertical add those cells to target cells
+      catch
+        throw error that ship can't be there
+        break
+
+    if targetCells length is equal to ship size
+      foreach target cell place ship
+    
+  receiveAttack(x y)
+    hit target cell
+
+
+*/
+
+export { Ship, Cell, Gameboard };
