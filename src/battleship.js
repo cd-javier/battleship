@@ -74,11 +74,13 @@ class Gameboard {
     let coordX = x;
 
     for (let i = 0; i < ship.length; i++) {
+      if (coordX > 9 || coordY > 9) {
+        throw new Error('Cell out of bounds');
+      }
+
       const cell = this.board[coordY][coordX];
 
-      if (!cell) {
-        throw new Error('Cell out of bounds');
-      } else if (cell.content) {
+      if (cell.content) {
         throw new Error("Can't place ship over another ship");
       }
 
@@ -91,29 +93,12 @@ class Gameboard {
       }
     }
 
-    if (targetCells.length === ship.length) {
-      targetCells.forEach((cell) => cell.place(ship));
-    }
+    targetCells.forEach((cell) => cell.place(ship));
   }
 }
 
 /* 
 class Gameboard
-  constructor
-    board = initBoard
-
-  placeShip(y, x, ship, isHorizontal def true)
-    variable target cells is empty array
-    for loop that runs ship size times
-      try
-        if direction is horizontal add those cells to target cells
-        if direction is vertical add those cells to target cells
-      catch
-        throw error that ship can't be there
-        break
-
-    if targetCells length is equal to ship size
-      foreach target cell place ship
     
   receiveAttack(x y)
     hit target cell
