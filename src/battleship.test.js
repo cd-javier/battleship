@@ -166,6 +166,7 @@ describe('Gameboard class', () => {
       gameboard.placeShip(8, 6, ship2);
       expect(gameboard.board[3][3].content).toBe(ship);
       expect(gameboard.board[8][6].content).toBe(ship2);
+      expect(gameboard.ships.length).toBe(2);
     });
 
     test('Can place ship of size 4 horizontally', () => {
@@ -176,6 +177,7 @@ describe('Gameboard class', () => {
       expect(gameboard.board[3][5].content).toBe(ship);
       expect(gameboard.board[3][6].content).toBe(ship);
       expect(gameboard.board[3][7].content).toBeUndefined();
+      expect(gameboard.ships.length).toBe(1);
     });
 
     test('Can place ship of size 4 vertically', () => {
@@ -186,6 +188,7 @@ describe('Gameboard class', () => {
       expect(gameboard.board[5][3].content).toBe(ship);
       expect(gameboard.board[6][3].content).toBe(ship);
       expect(gameboard.board[7][3].content).toBeUndefined();
+      expect(gameboard.ships.length).toBe(1);
     });
 
     test("Can't place ship out of bounds horizontally", () => {
@@ -194,6 +197,7 @@ describe('Gameboard class', () => {
         'Cell out of bounds'
       );
       expect(gameboard.board[4][8].content).toBeUndefined();
+      expect(gameboard.ships.length).toBe(0);
     });
 
     test("Can't place ship out of bounds vertically", () => {
@@ -202,6 +206,7 @@ describe('Gameboard class', () => {
         'Cell out of bounds'
       );
       expect(gameboard.board[8][4].content).toBeUndefined();
+      expect(gameboard.ships.length).toBe(0);
     });
 
     test("Can't place ship over another ship", () => {
@@ -213,6 +218,7 @@ describe('Gameboard class', () => {
         "Can't place ship over another ship"
       );
       expect(gameboard.board[2][5].content).toBeUndefined();
+      expect(gameboard.ships.length).toBe(1);
     });
   });
 
@@ -270,6 +276,41 @@ describe('Gameboard class', () => {
       gameboard.receiveAttack(0, 0);
       expect(() => gameboard.receiveAttack(4, 3)).toThrow();
       expect(() => gameboard.receiveAttack(0, 0)).toThrow();
+    });
+  });
+
+  describe('hasUnsunkShips', () => {
+    let ship;
+    let ship2;
+    beforeEach(() => {
+      ship = new Ship(4);
+      ship2 = new Ship(1);
+      gameboard.placeShip(4, 3, ship);
+      gameboard.placeShip(0, 0, ship2);
+    });
+
+    test('Returns true before any attacks', () => {
+      expect(gameboard.hasUnsunkShips()).toBe(true);
+    });
+
+    test('Returns true after one ship is sunk', () => {
+      gameboard.receiveAttack(0, 0);
+      expect(gameboard.hasUnsunkShips()).toBe(true);
+    });
+
+    test('Returns true after all ship are hit but not sunk', () => {
+      gameboard.receiveAttack(0, 0);
+      gameboard.receiveAttack(4, 3);
+      expect(gameboard.hasUnsunkShips()).toBe(true);
+    });
+
+    test('Returns false after all ship sunk', () => {
+      gameboard.receiveAttack(0, 0);
+      gameboard.receiveAttack(4, 3);
+      gameboard.receiveAttack(4, 4);
+      gameboard.receiveAttack(4, 5);
+      gameboard.receiveAttack(4, 6);
+      expect(gameboard.hasUnsunkShips()).toBe(false);
     });
   });
 });
