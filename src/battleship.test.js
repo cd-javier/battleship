@@ -215,4 +215,61 @@ describe('Gameboard class', () => {
       expect(gameboard.board[2][5].content).toBeUndefined();
     });
   });
+
+  describe('receiveAttack', () => {
+    let ship;
+    beforeEach(() => {
+      ship = new Ship(4);
+      gameboard.placeShip(4, 3, ship);
+    });
+
+    test('Can attack water', () => {
+      gameboard.receiveAttack(0, 0);
+      gameboard.receiveAttack(1, 0);
+      expect(gameboard.board[0][0].isHit).toBe(true);
+      expect(gameboard.board[1][0].isHit).toBe(true);
+      expect(gameboard.board[0][1].isHit).toBe(false);
+      expect(gameboard.board[2][0].isHit).toBe(false);
+      expect(ship.hits).toBe(0);
+    });
+
+    test('Can attack ship once', () => {
+      gameboard.receiveAttack(4, 3);
+      expect(gameboard.board[4][3].isHit).toBe(true);
+      expect(gameboard.board[0][0].isHit).toBe(false);
+      expect(ship.hits).toBe(1);
+      expect(ship.sunk).toBe(false);
+    });
+
+    test('Can attack ship twice', () => {
+      gameboard.receiveAttack(4, 3);
+      gameboard.receiveAttack(4, 6);
+      expect(gameboard.board[4][3].isHit).toBe(true);
+      expect(gameboard.board[4][6].isHit).toBe(true);
+      expect(gameboard.board[0][0].isHit).toBe(false);
+      expect(ship.hits).toBe(2);
+      expect(ship.sunk).toBe(false);
+    });
+
+    test('Can sink ship', () => {
+      gameboard.receiveAttack(4, 3);
+      gameboard.receiveAttack(4, 4);
+      gameboard.receiveAttack(4, 5);
+      gameboard.receiveAttack(4, 6);
+      expect(gameboard.board[4][3].isHit).toBe(true);
+      expect(gameboard.board[4][4].isHit).toBe(true);
+      expect(gameboard.board[4][5].isHit).toBe(true);
+      expect(gameboard.board[4][6].isHit).toBe(true);
+      expect(gameboard.board[0][0].isHit).toBe(false);
+      expect(ship.hits).toBe(4);
+      expect(ship.sunk).toBe(true);
+    });
+
+    test("Can't attack same cell twice", () => {
+      gameboard.receiveAttack(4, 3);
+      gameboard.receiveAttack(0, 0);
+      expect(() => gameboard.receiveAttack(4, 3)).toThrow();
+      expect(() => gameboard.receiveAttack(0, 0)).toThrow();
+    });
+  });
 });
