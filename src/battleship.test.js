@@ -277,6 +277,13 @@ describe('Gameboard class', () => {
       expect(() => gameboard.receiveAttack(4, 3)).toThrow();
       expect(() => gameboard.receiveAttack(0, 0)).toThrow();
     });
+
+    test("Returns true/false whether it hits water or a ship", () => {
+      expect(gameboard.receiveAttack(4, 3)).toBe(true);
+      expect(gameboard.receiveAttack(4, 4)).toBe(true);
+      expect(gameboard.receiveAttack(5, 4)).toBe(false);
+      expect(gameboard.receiveAttack(0, 0)).toBe(false);
+    });
   });
 
   describe('hasUnsunkShips', () => {
