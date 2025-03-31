@@ -52,6 +52,7 @@ class Cell {
 class Gameboard {
   constructor() {
     this.board = this.initBoard(10);
+    this.ships = [];
   }
 
   initBoard(size) {
@@ -94,10 +95,15 @@ class Gameboard {
     }
 
     targetCells.forEach((cell) => cell.place(ship));
+    this.ships.push(ship);
   }
 
   receiveAttack(y, x) {
     this.board[y][x].hit();
+  }
+
+  hasUnsunkShips() {
+    return this.ships.filter((ship) => !ship.sunk).length > 0;
   }
 }
 
