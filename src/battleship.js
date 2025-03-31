@@ -45,7 +45,9 @@ class Cell {
 
     if (this.content instanceof Ship) {
       this.content.hit();
+      return true;
     }
+    return false;
   }
 }
 
@@ -99,7 +101,7 @@ class Gameboard {
   }
 
   receiveAttack(y, x) {
-    this.board[y][x].hit();
+    return this.board[y][x].hit();
   }
 
   hasUnsunkShips() {
