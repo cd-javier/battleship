@@ -95,15 +95,10 @@ class Gameboard {
 
     targetCells.forEach((cell) => cell.place(ship));
   }
+
+  receiveAttack(y, x) {
+    this.board[y][x].hit();
+  }
 }
-
-/* 
-class Gameboard
-    
-  receiveAttack(x y)
-    hit target cell
-
-
-*/
 
 export { Ship, Cell, Gameboard };
