@@ -330,63 +330,51 @@ describe('Player class', () => {
 
   describe('placeShip', () => {
     test('Shows ships to place before anything', () => {
-      expect(player.shipsToPlace.length).toBe(10);
+      expect(player.shipsToPlace.length).toBe(6);
       expect(player.gameboard.ships.length).toBe(0);
     });
 
     test('Correctly places one ship', () => {
       player.placeShip(0, 0);
-      expect(player.shipsToPlace.length).toBe(9);
+      expect(player.shipsToPlace.length).toBe(5);
       expect(player.gameboard.ships.length).toBe(1);
     });
 
     test('Correctly places two ships', () => {
       player.placeShip(0, 0);
       player.placeShip(1, 0);
-      expect(player.shipsToPlace.length).toBe(8);
+      expect(player.shipsToPlace.length).toBe(4);
       expect(player.gameboard.ships.length).toBe(2);
     });
 
     test('Correctly places all ships', () => {
       player.placeShip(0, 0);
-      player.placeShip(1, 0);
+      player.placeShip(0, 5);
       player.placeShip(2, 0);
-      player.placeShip(3, 0);
       player.placeShip(4, 0);
-      player.placeShip(5, 0);
       player.placeShip(6, 0);
-      player.placeShip(7, 0);
-      player.placeShip(8, 0);
       player.placeShip(9, 0);
       expect(player.shipsToPlace.length).toBe(0);
-      expect(player.gameboard.ships.length).toBe(10);
+      expect(player.gameboard.ships.length).toBe(6);
     });
 
     test('Places ships in the correct order', () => {
       player.placeShip(0, 0);
-      player.placeShip(1, 0);
+      player.placeShip(0, 5);
       player.placeShip(2, 0);
-      player.placeShip(3, 0);
       player.placeShip(4, 0);
-      player.placeShip(5, 0);
       player.placeShip(6, 0);
-      player.placeShip(7, 0);
-      player.placeShip(8, 0);
       player.placeShip(9, 0);
-      expect(player.gameboard.ships[0].length).toBe(4);
-      expect(player.gameboard.ships[9].length).toBe(1);
+      expect(player.gameboard.ships[0].length).toBe(5);
+      expect(player.gameboard.ships[5].length).toBe(2);
     });
 
     test('Throws error if all ships have been placed', () => {
       player.placeShip(0, 0);
-      player.placeShip(1, 0);
+      player.placeShip(0, 5);
       player.placeShip(2, 0);
-      player.placeShip(3, 0);
       player.placeShip(4, 0);
-      player.placeShip(5, 0);
       player.placeShip(6, 0);
-      player.placeShip(7, 0);
-      player.placeShip(8, 0);
       player.placeShip(9, 0);
       expect(() => player.placeShip(9, 6)).toThrow();
     });
@@ -400,7 +388,7 @@ describe('Player class', () => {
 
     test('Places all ships randomly on init', () => {
       expect(computer.shipsToPlace.length).toBe(0);
-      expect(computer.gameboard.ships.length).toBe(10);
+      expect(computer.gameboard.ships.length).toBe(6);
     });
   });
 });

@@ -113,16 +113,12 @@ class Player {
   constructor() {
     this.gameboard = new Gameboard();
     this.shipsToPlace = [
-      new Ship(1),
-      new Ship(1),
-      new Ship(1),
-      new Ship(1),
-      new Ship(2),
       new Ship(2),
       new Ship(2),
       new Ship(3),
       new Ship(3),
       new Ship(4),
+      new Ship(5),
     ];
   }
 
