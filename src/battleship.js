@@ -109,4 +109,59 @@ class Gameboard {
   }
 }
 
-export { Ship, Cell, Gameboard };
+class Player {
+  constructor() {
+    this.gameboard = new Gameboard();
+    this.shipsToPlace = [
+      new Ship(1),
+      new Ship(1),
+      new Ship(1),
+      new Ship(1),
+      new Ship(2),
+      new Ship(2),
+      new Ship(2),
+      new Ship(3),
+      new Ship(3),
+      new Ship(4),
+    ];
+  }
+
+  placeShip(y, x, isHorizontal = true) {
+    if (this.shipsToPlace.length === 0) {
+      throw new Error('All ships have been placed');
+    }
+
+    const ship = this.shipsToPlace[this.shipsToPlace.length - 1];
+
+    try {
+      this.gameboard.placeShip(y, x, ship, isHorizontal);
+    } catch (error) {
+      throw new Error(error);
+    }
+
+    this.shipsToPlace.pop();
+  }
+}
+
+class CPUPlayer extends Player {
+  constructor() {
+    super();
+    this.init();
+  }
+
+  init() {
+    while (this.shipsToPlace.length > 0) {
+      const y = Math.floor(Math.random() * 10);
+      const x = Math.floor(Math.random() * 10);
+      const isHorizontal = Math.floor(Math.random() * 2);
+
+      try {
+        this.placeShip(y, x, isHorizontal);
+      } catch {
+        continue;
+      }
+    }
+  }
+}
+
+export { Ship, Cell, Gameboard, Player, CPUPlayer };
