@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable no-undef */
-import { Ship, Cell, Gameboard } from './battleship';
+import { Ship, Cell, Gameboard, Player } from './battleship';
 
 describe('Ship class', () => {
   describe('Length 1', () => {
@@ -278,7 +278,7 @@ describe('Gameboard class', () => {
       expect(() => gameboard.receiveAttack(0, 0)).toThrow();
     });
 
-    test("Returns true/false whether it hits water or a ship", () => {
+    test('Returns true/false whether it hits water or a ship', () => {
       expect(gameboard.receiveAttack(4, 3)).toBe(true);
       expect(gameboard.receiveAttack(4, 4)).toBe(true);
       expect(gameboard.receiveAttack(5, 4)).toBe(false);
@@ -318,6 +318,77 @@ describe('Gameboard class', () => {
       gameboard.receiveAttack(4, 5);
       gameboard.receiveAttack(4, 6);
       expect(gameboard.hasUnsunkShips()).toBe(false);
+    });
+  });
+});
+
+describe('Player class', () => {
+  let player;
+  beforeEach(() => {
+    player = new Player();
+  });
+
+  describe('placeShip', () => {
+    test('Shows ships to place before anything', () => {
+      expect(player.shipsToPlace.length).toBe(10);
+      expect(player.gameboard.ships.length).toBe(0);
+    });
+
+    test('Correctly places one ship', () => {
+      player.placeShip(0, 0);
+      expect(player.shipsToPlace.length).toBe(9);
+      expect(player.gameboard.ships.length).toBe(1);
+    });
+
+    test('Correctly places two ships', () => {
+      player.placeShip(0, 0);
+      player.placeShip(1, 0);
+      expect(player.shipsToPlace.length).toBe(8);
+      expect(player.gameboard.ships.length).toBe(2);
+    });
+
+    test('Correctly places all ships', () => {
+      player.placeShip(0, 0);
+      player.placeShip(1, 0);
+      player.placeShip(2, 0);
+      player.placeShip(3, 0);
+      player.placeShip(4, 0);
+      player.placeShip(5, 0);
+      player.placeShip(6, 0);
+      player.placeShip(7, 0);
+      player.placeShip(8, 0);
+      player.placeShip(9, 0);
+      expect(player.shipsToPlace.length).toBe(0);
+      expect(player.gameboard.ships.length).toBe(10);
+    });
+
+    test('Places ships in the correct order', () => {
+      player.placeShip(0, 0);
+      player.placeShip(1, 0);
+      player.placeShip(2, 0);
+      player.placeShip(3, 0);
+      player.placeShip(4, 0);
+      player.placeShip(5, 0);
+      player.placeShip(6, 0);
+      player.placeShip(7, 0);
+      player.placeShip(8, 0);
+      player.placeShip(9, 0);
+      expect(player.gameboard.ships[0].length).toBe(4);
+      expect(player.gameboard.ships[9].length).toBe(1);
+    });
+
+    test('Throws error if all ships have been placed', () => {
+      player.placeShip(0, 0);
+      player.placeShip(1, 0);
+      player.placeShip(2, 0);
+      player.placeShip(3, 0);
+      player.placeShip(4, 0);
+      player.placeShip(5, 0);
+      player.placeShip(6, 0);
+      player.placeShip(7, 0);
+      player.placeShip(8, 0);
+      player.placeShip(9, 0);
+      expect(() => player.placeShip(9, 6)).toThrow();
     });
   });
 });
