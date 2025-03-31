@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable no-undef */
-import { Ship, Cell, Gameboard, Player } from './battleship';
+import { Ship, Cell, Gameboard, Player, CPUPlayer } from './battleship';
 
 describe('Ship class', () => {
   describe('Length 1', () => {
@@ -389,6 +389,18 @@ describe('Player class', () => {
       player.placeShip(8, 0);
       player.placeShip(9, 0);
       expect(() => player.placeShip(9, 6)).toThrow();
+    });
+  });
+
+  describe('CPUPlayer class', () => {
+    let computer;
+    beforeEach(() => {
+      computer = new CPUPlayer();
+    });
+
+    test('Places all ships randomly on init', () => {
+      expect(computer.shipsToPlace.length).toBe(0);
+      expect(computer.gameboard.ships.length).toBe(10);
     });
   });
 });
