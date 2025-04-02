@@ -20,18 +20,19 @@ class Ship {
 }
 
 class Cell {
-  constructor() {
+  constructor(y, x) {
+    this.coords = [y, x];
     this.content = undefined;
     this.isHit = false;
   }
 
-  place(obj) {
-    if (this.content) {
+  place(content) {
+    if (this.content instanceof Ship) {
       throw new Error(
         "This cell already has content that can't be overwritten"
       );
     }
-    this.content = obj;
+    this.content = content;
   }
 
   hit() {
@@ -62,12 +63,37 @@ class Gameboard {
     for (let i = 0; i < size; i++) {
       const row = [];
       for (let j = 0; j < size; j++) {
-        const cell = new Cell();
+        const cell = new Cell(i, j);
         row.push(cell);
       }
       board.push(row);
     }
     return board;
+  }
+
+  isAdjacent(cell) {
+    const [y, x] = cell.coords;
+
+    const surroundingCoords = [
+      [y - 1, x - 1],
+      [y - 1, x],
+      [y - 1, x + 1],
+      [y, x - 1],
+      [y, x + 1],
+      [y + 1, x - 1],
+      [y + 1, x],
+      [y + 1, x + 1],
+    ].filter(([a, b]) => a >= 0 && b >= 0 && a < 10 && b < 10);
+
+    const surroundingCells = surroundingCoords.map(([y, x]) => {
+      return this.board[y][x];
+    });
+
+    const cellsWithShip = surroundingCells.filter(
+      (cell) => cell.content instanceof Ship
+    );
+
+    return cellsWithShip.length > 0;
   }
 
   placeShip(y, x, ship, isHorizontal = true) {
@@ -83,7 +109,7 @@ class Gameboard {
 
       const cell = this.board[coordY][coordX];
 
-      if (cell.content) {
+      if (cell.content instanceof Ship) {
         throw new Error("Can't place ship over another ship");
       }
 
@@ -94,6 +120,10 @@ class Gameboard {
       } else {
         coordY++;
       }
+    }
+
+    if (targetCells.filter((cell) => this.isAdjacent(cell)).length > 0) {
+      throw new Error("Can't place ship adjacent to another ship");
     }
 
     targetCells.forEach((cell) => cell.place(ship));
