@@ -51,9 +51,9 @@ function displayMessage(message) {
   Selector.display.textContent = message;
 }
 
-function playerOneTurn() {
+function playerTurn() {
   function playerOneEventListener(e) {
-    const targetCell = e.target;
+    const targetCell = e.target.closest('.gameboard-cell');
 
     const y = targetCell.dataset.y;
     const x = targetCell.dataset.x;
@@ -73,12 +73,12 @@ function playerOneTurn() {
 
       if (attack) {
         if (player2.gameboard.hasUnsunkShips()) {
-          playerOneTurn();
+          playerTurn();
         } else {
           displayMessage('Game over - Player 1 Wins!');
         }
       } else {
-        playerTwoTurn();
+        cpuTurn();
       }
     } else {
       displayMessage("You can't his the same cell twice");
@@ -88,7 +88,7 @@ function playerOneTurn() {
   Selector.opponentGameboard.addEventListener('click', playerOneEventListener);
 }
 
-function playerTwoTurn() {
+function cpuTurn() {
   const y = Math.floor(Math.random() * 10);
   const x = Math.floor(Math.random() * 10);
   let attack;
@@ -96,19 +96,19 @@ function playerTwoTurn() {
   try {
     attack = player1.gameboard.receiveAttack(y, x);
   } catch {
-    playerTwoTurn();
+    cpuTurn();
   }
 
   renderGameboard(player1, false);
 
   if (attack) {
     if (player2.gameboard.hasUnsunkShips()) {
-      playerTwoTurn();
+      cpuTurn();
     } else {
       displayMessage('Game over - Player 2 Wins!');
     }
   } else {
-    playerOneTurn();
+    playerTurn();
   }
 }
 
@@ -127,7 +127,7 @@ function startGame() {
 
   renderGameboard(player1, false);
   renderGameboard(player2, true);
-  playerOneTurn();
+  playerTurn();
 }
 
 let player1, player2;
