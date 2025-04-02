@@ -1,12 +1,36 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Battleship</title>
-  </head>
 
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battleship</title>
+</head>
+
+<body>
+  <div class="wrapper">
     <h1>Battleship</h1>
-  </body>
+
+    <div class="display" id="display"> Place ships</div>
+
+    <div class="actions" id="actions">
+      <button>action one</button>
+      <button>action two</button>
+      <button>action three</button>
+    </div>
+
+    <div class="gameplay">
+      <div class="player-wrapper">
+        <div class="gameboard" id="player-gameboard"></div>
+        <div class="gameboard-label">Your battlefield</div>
+      </div>
+
+      <div class="player-wrapper">
+        <div class="gameboard" id="opponent-gameboard"></div>
+        <div class="gameboard-label">Opponent's battlefield</div>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
