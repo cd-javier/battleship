@@ -9,6 +9,7 @@
   --hit: #f7c2bf;
   --miss: #bff1f7;
   --primary: #bff1f7;
+  --bg: #f6fdfe;
 }
 
 .wrapper {
@@ -54,6 +55,8 @@ h1 {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(10, 1fr);
+
+  background-color: var(--bg);
 }
 
 .gameboard-cell {
