@@ -7,10 +7,20 @@ const Selector = (function () {
   const display = document.getElementById('display');
   const actions = document.getElementById('actions');
   const playerGameboard = document.getElementById('player-gameboard');
+  const playerFleet = document.getElementById('player-fleet');
   const opponentGameboard = document.getElementById('opponent-gameboard');
+  const opponentFleet = document.getElementById('opponent-fleet');
   const startBtn = document.getElementById('start');
 
-  return { display, actions, playerGameboard, opponentGameboard, startBtn };
+  return {
+    display,
+    actions,
+    playerGameboard,
+    playerFleet,
+    opponentGameboard,
+    opponentFleet,
+    startBtn,
+  };
 })();
 
 function renderGameboard(player, isOpponent) {
@@ -19,7 +29,10 @@ function renderGameboard(player, isOpponent) {
     ? Selector.opponentGameboard
     : Selector.playerGameboard;
 
+  const fleet = isOpponent ? Selector.opponentFleet : Selector.playerFleet;
+
   target.innerHTML = '';
+  fleet.innerHTML = '';
 
   board.flat().forEach((cell) => {
     const singleCell = document.createElement('div');
@@ -45,6 +58,30 @@ function renderGameboard(player, isOpponent) {
 
     target.appendChild(singleCell);
   });
+
+  player.shipsToPlace.forEach((ship) => {
+    const shipToPlace = renderFleet(ship);
+    shipToPlace.classList.add('unplaced');
+    fleet.append(shipToPlace);
+  });
+
+  player.gameboard.ships.forEach((ship) => {
+    fleet.append(renderFleet(ship));
+  });
+}
+
+function renderFleet(ship) {
+  const shipToPlace = document.createElement('div');
+  shipToPlace.classList.add('ship');
+  if (ship.sunk) shipToPlace.classList.add('sunk');
+
+  for (let i = 0; i < ship.length; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    shipToPlace.append(cell);
+  }
+
+  return shipToPlace;
 }
 
 function displayMessage(message) {
