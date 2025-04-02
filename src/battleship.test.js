@@ -20,7 +20,9 @@ describe('Ship class', () => {
 
     test("Doesn't allow it to be hit once it's sunk", () => {
       ship.hit();
-      expect(() => ship.hit()).toThrow();
+      expect(() => ship.hit()).toThrow(
+        "This ship has already been sank and can't be hit again"
+      );
     });
   });
 
@@ -48,7 +50,9 @@ describe('Ship class', () => {
     test("Doesn't allow it to be hit once it's sunk", () => {
       ship.hit();
       ship.hit();
-      expect(() => ship.hit()).toThrow();
+      expect(() => ship.hit()).toThrow(
+        "This ship has already been sank and can't be hit again"
+      );
     });
   });
 
@@ -84,7 +88,9 @@ describe('Ship class', () => {
       ship.hit();
       ship.hit();
       ship.hit();
-      expect(() => ship.hit()).toThrow();
+      expect(() => ship.hit()).toThrow(
+        "This ship has already been sank and can't be hit again"
+      );
     });
   });
 });
@@ -110,7 +116,9 @@ describe('Cell class', () => {
       const ship = new Ship(1);
       const ship2 = new Ship(1);
       cell.place(ship);
-      expect(() => cell.place(ship2)).toThrow();
+      expect(() => cell.place(ship2)).toThrow(
+        "This cell already has content that can't be overwritten"
+      );
     });
 
     test('isHit is false', () => {
@@ -126,7 +134,9 @@ describe('Cell class', () => {
 
     test("Doesn't allow to be hit twice", () => {
       cell.hit();
-      expect(() => cell.hit()).toThrow();
+      expect(() => cell.hit()).toThrow(
+        "This cell has already been hit and it can't be hit again"
+      );
     });
 
     test('When the cell contains a ship, the ship has been hit', () => {
@@ -320,8 +330,12 @@ describe('Gameboard class', () => {
     test("Can't attack same cell twice", () => {
       gameboard.receiveAttack(4, 3);
       gameboard.receiveAttack(0, 0);
-      expect(() => gameboard.receiveAttack(4, 3)).toThrow();
-      expect(() => gameboard.receiveAttack(0, 0)).toThrow();
+      expect(() => gameboard.receiveAttack(4, 3)).toThrow(
+        "This cell has already been hit and it can't be hit again"
+      );
+      expect(() => gameboard.receiveAttack(0, 0)).toThrow(
+        "This cell has already been hit and it can't be hit again"
+      );
     });
 
     test('Returns true/false whether it hits water or a ship', () => {
@@ -422,7 +436,9 @@ describe('Player class', () => {
       player.placeShip(4, 0);
       player.placeShip(6, 0);
       player.placeShip(9, 0);
-      expect(() => player.placeShip(9, 6)).toThrow();
+      expect(() => player.placeShip(9, 6)).toThrow(
+        'All ships have been placed'
+      );
     });
   });
 
