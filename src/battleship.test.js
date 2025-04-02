@@ -220,6 +220,52 @@ describe('Gameboard class', () => {
       expect(gameboard.board[2][5].content).toBeUndefined();
       expect(gameboard.ships.length).toBe(1);
     });
+
+    test("Can't place ship adjacent to another ship", () => {
+      const ship = new Ship(4);
+      const ship2 = new Ship(4);
+
+      gameboard.placeShip(4, 3, ship);
+      expect(() => gameboard.placeShip(5, 3, ship2)).toThrow(
+        "Can't place ship adjacent to another ship"
+      );
+      expect(gameboard.board[5][3].content).toBeUndefined();
+      expect(gameboard.ships.length).toBe(1);
+    });
+
+    describe('isAdjacent', () => {
+      test('Works placing ship of size 1 on 0,0', () => {
+        const ship = new Ship(1);
+        gameboard.placeShip(0, 0, ship);
+        expect(gameboard.isAdjacent(gameboard.board[0][1])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[1][1])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[1][0])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[0][2])).toBe(false);
+        expect(gameboard.isAdjacent(gameboard.board[1][2])).toBe(false);
+      });
+
+      test('Works placing ship of size 1 on 5,5', () => {
+        const ship = new Ship(1);
+        gameboard.placeShip(5, 5, ship);
+        expect(gameboard.isAdjacent(gameboard.board[4][4])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[6][6])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[1][0])).toBe(false);
+      });
+
+      test('Works placing ship of size 4 on 2,2', () => {
+        const ship = new Ship(4);
+        gameboard.placeShip(2, 2, ship);
+        expect(gameboard.isAdjacent(gameboard.board[1][1])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[1][2])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[1][3])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[2][1])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[2][4])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[3][1])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[3][2])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[3][4])).toBe(true);
+        expect(gameboard.isAdjacent(gameboard.board[1][0])).toBe(false);
+      });
+    });
   });
 
   describe('receiveAttack', () => {
@@ -342,14 +388,14 @@ describe('Player class', () => {
 
     test('Correctly places two ships', () => {
       player.placeShip(0, 0);
-      player.placeShip(1, 0);
+      player.placeShip(3, 0);
       expect(player.shipsToPlace.length).toBe(4);
       expect(player.gameboard.ships.length).toBe(2);
     });
 
     test('Correctly places all ships', () => {
       player.placeShip(0, 0);
-      player.placeShip(0, 5);
+      player.placeShip(0, 6);
       player.placeShip(2, 0);
       player.placeShip(4, 0);
       player.placeShip(6, 0);
@@ -360,7 +406,7 @@ describe('Player class', () => {
 
     test('Places ships in the correct order', () => {
       player.placeShip(0, 0);
-      player.placeShip(0, 5);
+      player.placeShip(0, 6);
       player.placeShip(2, 0);
       player.placeShip(4, 0);
       player.placeShip(6, 0);
@@ -371,7 +417,7 @@ describe('Player class', () => {
 
     test('Throws error if all ships have been placed', () => {
       player.placeShip(0, 0);
-      player.placeShip(0, 5);
+      player.placeShip(0, 6);
       player.placeShip(2, 0);
       player.placeShip(4, 0);
       player.placeShip(6, 0);
