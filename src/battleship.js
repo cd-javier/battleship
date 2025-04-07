@@ -188,15 +188,8 @@ class Player {
 
     this.shipsToPlace.pop();
   }
-}
 
-class CPUPlayer extends Player {
-  constructor() {
-    super();
-    this.init();
-  }
-
-  init() {
+  randomInit() {
     while (this.shipsToPlace.length > 0) {
       const y = Math.floor(Math.random() * 10);
       const x = Math.floor(Math.random() * 10);
@@ -211,4 +204,4 @@ class CPUPlayer extends Player {
   }
 }
 
-export { Ship, Cell, Gameboard, Player, CPUPlayer };
+export { Ship, Cell, Gameboard, Player };

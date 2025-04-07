@@ -122,6 +122,10 @@ function playerTurn() {
     }
   }
 
+  Selector.opponentGameboard.removeEventListener(
+    'click',
+    playerOneEventListener
+  );
   Selector.opponentGameboard.addEventListener('click', playerOneEventListener);
 }
 
@@ -149,18 +153,14 @@ function cpuTurn() {
   }
 }
 
-function startGame() {
+function cpuGame() {
   Selector.startBtn.textContent = 'RESTART';
 
   player1 = new Player();
-  player2 = new CPUPlayer();
+  player2 = new Player();
 
-  player1.placeShip(1, 2);
-  player1.placeShip(3, 5, false);
-  player1.placeShip(3, 8, false);
-  player1.placeShip(8, 1, true);
-  player1.placeShip(3, 1);
-  player1.placeShip(7, 7);
+  player1.randomInit();
+  player2.randomInit();
 
   renderGameboard(player1, false);
   renderGameboard(player2, true);
@@ -169,4 +169,4 @@ function startGame() {
 
 let player1, player2;
 
-Selector.startBtn.addEventListener('click', startGame);
+Selector.startBtn.addEventListener('click', cpuGame);
