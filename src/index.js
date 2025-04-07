@@ -88,47 +88,45 @@ function displayMessage(message) {
   Selector.display.textContent = message;
 }
 
-function playerOneEventListener(e) {
-  const targetCell = e.target.closest('.gameboard-cell');
-
-  // Doesn't allow the player to hit the same cell twice
-  if (
-    targetCell.classList.contains('hit') ||
-    targetCell.classList.contains('miss')
-  ) {
-    displayMessage("You can't his the same cell twice");
-    return;
-  }
-
-  const y = targetCell.dataset.y;
-  const x = targetCell.dataset.x;
-
-  const attack = player2.gameboard.receiveAttack(y, x);
-
-  renderGameboard(player2, true);
-
-  Selector.opponentGameboard.removeEventListener(
-    'click',
-    playerOneEventListener
-  );
-
-  if (attack) {
-    if (player2.gameboard.hasUnsunkShips()) {
-      playerTurn();
-    } else {
-      displayMessage('Game over - Player 1 Wins!');
-    }
-  } else {
-    cpuTurn();
-  }
-}
-
 function playerTurn() {
-  Selector.opponentGameboard.removeEventListener(
-    'click',
-    playerOneEventListener
-  );
-  Selector.opponentGameboard.addEventListener('click', playerOneEventListener);
+  function playerOneEventListener(e) {
+    const targetCell = e.target.closest('.gameboard-cell');
+  
+    // Doesn't allow the player to hit the same cell twice
+    if (
+      targetCell.classList.contains('hit') ||
+      targetCell.classList.contains('miss')
+    ) {
+      displayMessage("You can't his the same cell twice");
+      playerTurn();
+      return;
+    }
+  
+    const y = targetCell.dataset.y;
+    const x = targetCell.dataset.x;
+  
+    const attack = player2.gameboard.receiveAttack(y, x);
+  
+    renderGameboard(player2, true);
+  
+    Selector.opponentGameboard.removeEventListener(
+      'click',
+      playerOneEventListener
+    );
+  
+    if (attack) {
+      if (player2.gameboard.hasUnsunkShips()) {
+        playerTurn();
+      } else {
+        displayMessage('Game over - Player 1 Wins!');
+      }
+    } else {
+      cpuTurn();
+    }
+  }
+  Selector.opponentGameboard.addEventListener('click', playerOneEventListener, {
+    once: true,
+  });
 }
 
 function cpuTurn() {
