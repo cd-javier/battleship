@@ -96,21 +96,20 @@ class Gameboard {
     return cellsWithShip.length > 0;
   }
 
-  placeShip(y, x, ship, isHorizontal = true) {
+  canPlace(y, x, length, isHorizontal = true) {
     const targetCells = [];
-
     let coordY = y;
     let coordX = x;
 
-    for (let i = 0; i < ship.length; i++) {
+    for (let i = 0; i < length; i++) {
       if (coordX > 9 || coordY > 9) {
-        throw new Error('Cell out of bounds');
+        return false;
       }
 
       const cell = this.board[coordY][coordX];
 
       if (cell.content instanceof Ship) {
-        throw new Error("Can't place ship over another ship");
+        return false;
       }
 
       targetCells.push(cell);
@@ -123,10 +122,32 @@ class Gameboard {
     }
 
     if (targetCells.filter((cell) => this.isAdjacent(cell)).length > 0) {
-      throw new Error("Can't place ship adjacent to another ship");
+      return false;
     }
 
-    targetCells.forEach((cell) => cell.place(ship));
+    return true;
+  }
+
+  placeShip(y, x, ship, isHorizontal = true) {
+    if (!this.canPlace(y, x, ship.length, isHorizontal)) {
+      throw new Error(
+        "Can't place ship over or adjacent to another ship, or out of bounds"
+      );
+    }
+
+    let coordY = y;
+    let coordX = x;
+
+    for (let i = 0; i < ship.length; i++) {
+      this.board[coordY][coordX].place(ship);
+
+      if (isHorizontal) {
+        coordX++;
+      } else {
+        coordY++;
+      }
+    }
+
     this.ships.push(ship);
   }
 

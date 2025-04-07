@@ -204,7 +204,7 @@ describe('Gameboard class', () => {
     test("Can't place ship out of bounds horizontally", () => {
       const ship = new Ship(4);
       expect(() => gameboard.placeShip(4, 8, ship)).toThrow(
-        'Cell out of bounds'
+        "Can't place ship over or adjacent to another ship, or out of bounds"
       );
       expect(gameboard.board[4][8].content).toBeUndefined();
       expect(gameboard.ships.length).toBe(0);
@@ -213,7 +213,7 @@ describe('Gameboard class', () => {
     test("Can't place ship out of bounds vertically", () => {
       const ship = new Ship(4);
       expect(() => gameboard.placeShip(8, 4, ship, false)).toThrow(
-        'Cell out of bounds'
+        "Can't place ship over or adjacent to another ship, or out of bounds"
       );
       expect(gameboard.board[8][4].content).toBeUndefined();
       expect(gameboard.ships.length).toBe(0);
@@ -225,7 +225,7 @@ describe('Gameboard class', () => {
 
       gameboard.placeShip(4, 3, ship);
       expect(() => gameboard.placeShip(2, 5, ship2, false)).toThrow(
-        "Can't place ship over another ship"
+        "Can't place ship over or adjacent to another ship, or out of bounds"
       );
       expect(gameboard.board[2][5].content).toBeUndefined();
       expect(gameboard.ships.length).toBe(1);
@@ -237,7 +237,7 @@ describe('Gameboard class', () => {
 
       gameboard.placeShip(4, 3, ship);
       expect(() => gameboard.placeShip(5, 3, ship2)).toThrow(
-        "Can't place ship adjacent to another ship"
+        "Can't place ship over or adjacent to another ship, or out of bounds"
       );
       expect(gameboard.board[5][3].content).toBeUndefined();
       expect(gameboard.ships.length).toBe(1);
