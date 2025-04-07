@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 import './styles.css';
 
-import { Player, CPUPlayer } from './battleship';
+import { Player } from './battleship';
 
 const Selector = (function () {
   const display = document.getElementById('display');
@@ -88,42 +88,42 @@ function displayMessage(message) {
   Selector.display.textContent = message;
 }
 
-function playerTurn() {
-  function playerOneEventListener(e) {
-    const targetCell = e.target.closest('.gameboard-cell');
+function playerOneEventListener(e) {
+  const targetCell = e.target.closest('.gameboard-cell');
 
-    // Doesn't allow the player to hit the same cell twice
-    if (
-      targetCell.classList.contains('hit') ||
-      targetCell.classList.contains('miss')
-    ) {
-      displayMessage("You can't his the same cell twice");
-      return;
-    }
-
-    const y = targetCell.dataset.y;
-    const x = targetCell.dataset.x;
-
-    const attack = player2.gameboard.receiveAttack(y, x);
-
-    renderGameboard(player2, true);
-
-    Selector.opponentGameboard.removeEventListener(
-      'click',
-      playerOneEventListener
-    );
-
-    if (attack) {
-      if (player2.gameboard.hasUnsunkShips()) {
-        playerTurn();
-      } else {
-        displayMessage('Game over - Player 1 Wins!');
-      }
-    } else {
-      cpuTurn();
-    }
+  // Doesn't allow the player to hit the same cell twice
+  if (
+    targetCell.classList.contains('hit') ||
+    targetCell.classList.contains('miss')
+  ) {
+    displayMessage("You can't his the same cell twice");
+    return;
   }
 
+  const y = targetCell.dataset.y;
+  const x = targetCell.dataset.x;
+
+  const attack = player2.gameboard.receiveAttack(y, x);
+
+  renderGameboard(player2, true);
+
+  Selector.opponentGameboard.removeEventListener(
+    'click',
+    playerOneEventListener
+  );
+
+  if (attack) {
+    if (player2.gameboard.hasUnsunkShips()) {
+      playerTurn();
+    } else {
+      displayMessage('Game over - Player 1 Wins!');
+    }
+  } else {
+    cpuTurn();
+  }
+}
+
+function playerTurn() {
   Selector.opponentGameboard.removeEventListener(
     'click',
     playerOneEventListener
@@ -161,7 +161,7 @@ function cpuGame() {
   player1 = new Player();
   player2 = new Player();
 
-  player1.randomInit();
+  // player1.randomInit();
   player2.randomInit();
 
   renderGameboard(player1, false);
