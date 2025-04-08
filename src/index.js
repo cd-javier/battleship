@@ -45,6 +45,10 @@ function renderGameboard(player, isOpponent) {
       singleCell.classList.add('ship');
     }
 
+    if (player.gameboard.isAdjacentToSunk(cell)) {
+      singleCell.classList.add('miss');
+    }
+
     if (cell.isHit) {
       if (cell.content) {
         singleCell.classList.add('hit');
@@ -91,7 +95,7 @@ function displayMessage(message) {
 function playerTurn() {
   function playerOneEventListener(e) {
     const targetCell = e.target.closest('.gameboard-cell');
-  
+
     // Doesn't allow the player to hit the same cell twice
     if (
       targetCell.classList.contains('hit') ||
@@ -101,19 +105,19 @@ function playerTurn() {
       playerTurn();
       return;
     }
-  
+
     const y = targetCell.dataset.y;
     const x = targetCell.dataset.x;
-  
+
     const attack = player2.gameboard.receiveAttack(y, x);
-  
+
     renderGameboard(player2, true);
-  
+
     Selector.opponentGameboard.removeEventListener(
       'click',
       playerOneEventListener
     );
-  
+
     if (attack) {
       if (player2.gameboard.hasUnsunkShips()) {
         playerTurn();

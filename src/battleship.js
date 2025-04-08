@@ -96,6 +96,33 @@ class Gameboard {
     return cellsWithShip.length > 0;
   }
 
+  isAdjacentToSunk(cell) {
+    const [y, x] = cell.coords;
+
+    const surroundingCoords = [
+      [y - 1, x - 1],
+      [y - 1, x],
+      [y - 1, x + 1],
+      [y, x - 1],
+      [y, x + 1],
+      [y + 1, x - 1],
+      [y + 1, x],
+      [y + 1, x + 1],
+    ].filter(([a, b]) => a >= 0 && b >= 0 && a < 10 && b < 10);
+
+    const surroundingCells = surroundingCoords.map(([y, x]) => {
+      return this.board[y][x];
+    });
+
+    const cellsWithShip = surroundingCells.filter(
+      (cell) => cell.content instanceof Ship
+    );
+
+    const cellsWithSunkShip = cellsWithShip.filter((cell) => cell.content.sunk);
+
+    return cellsWithSunkShip.length > 0;
+  }
+
   canPlace(y, x, length, isHorizontal = true) {
     const targetCells = [];
     let coordY = y;
