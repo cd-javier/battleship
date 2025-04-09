@@ -168,6 +168,35 @@ describe('Gameboard class', () => {
     });
   });
 
+  describe('canPlace method', () => {
+    test('Returns true for valid placements', () => {
+      expect(gameboard.canPlace(0, 0, 5, true)).toBe(true);
+      expect(gameboard.canPlace(1, 0, 5, true)).toBe(true);
+      expect(gameboard.canPlace(2, 0, 5, true)).toBe(true);
+      expect(gameboard.canPlace(3, 0, 5, true)).toBe(true);
+      expect(gameboard.canPlace(9, 9, 1, true)).toBe(true);
+      expect(gameboard.canPlace(7, 7, 3, true)).toBe(true);
+    });
+
+    test('Returns false for out of bounds', () => {
+      expect(gameboard.canPlace(0, 8, 3, true)).toBe(false);
+      expect(gameboard.canPlace(0, 9, 5, true)).toBe(false);
+      expect(gameboard.canPlace(9, 9, 2, false)).toBe(false);
+      expect(gameboard.canPlace(7, 7, 4, false)).toBe(false);
+      expect(gameboard.canPlace(7, 7, 4, true)).toBe(false);
+    });
+
+    test('Returns false for over and adj to a ship', () => {
+      const ship = new Ship(5);
+      gameboard.placeShip(3, 3, ship);
+
+      expect(gameboard.canPlace(3, 3, 1, true)).toBe(false);
+      expect(gameboard.canPlace(2, 2, 1, true)).toBe(false);
+      expect(gameboard.canPlace(3, 8, 1, true)).toBe(false);
+      expect(gameboard.canPlace(0, 2, 4, false)).toBe(false);
+    });
+  });
+
   describe('Placing ships', () => {
     test('Can place ship of size 1', () => {
       const ship = new Ship(1);
