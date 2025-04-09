@@ -138,35 +138,34 @@ function displayTemporaryMessage(message) {
   setTimeout(() => displayMessage(currentMessage), 2000);
 }
 
-function playerTurn() {
+function playerTurn(player, opponent, nextTurnFunc) {
   function playerOneEventListener(e) {
     const targetCell = e.target.closest('.gameboard-cell');
 
-    // Doesn't allow the player to hit the same cell twice
     if (
       targetCell.classList.contains('hit') ||
       targetCell.classList.contains('miss')
     ) {
       displayTemporaryMessage("You can't his the same cell twice");
-      playerTurn();
+      playerTurn(player, opponent, nextTurnFunc);
       return;
     }
 
     const y = targetCell.dataset.y;
     const x = targetCell.dataset.x;
 
-    const attack = player2.gameboard.receiveAttack(y, x);
+    const attack = opponent.gameboard.receiveAttack(y, x);
 
-    renderGame(player1, player2);
+    renderGame(player, opponent);
 
     if (attack) {
-      if (player2.gameboard.hasUnsunkShips()) {
-        playerTurn();
+      if (opponent.gameboard.hasUnsunkShips()) {
+        playerTurn(player, opponent, nextTurnFunc);
       } else {
-        displayMessage('Game over - Player 1 Wins!');
+        displayMessage('Game over - You win!');
       }
     } else {
-      cpuTurn();
+      nextTurnFunc();
     }
   }
 
@@ -195,7 +194,7 @@ function cpuTurn() {
       displayMessage('Game over - Player 2 Wins!');
     }
   } else {
-    playerTurn();
+    playerTurn(player1, player2, cpuTurn);
   }
 }
 
@@ -207,8 +206,13 @@ function cpuGame() {
 
   player2.randomInit();
 
+  // TO TEST
+  player1.randomInit();
+
   renderGame(player1, player2);
-  placeFleet(player1);
+  // placeFleet(player1);
+
+  playerTurn(player1, player2, cpuTurn);
 }
 
 function placeFleet(player) {
@@ -222,7 +226,9 @@ function placeFleet(player) {
       player.placeShip(y, x);
       renderGame(player1, player2);
     } else {
-      displayTemporaryMessage("Oops, you can't place that ship there, try again");
+      displayTemporaryMessage(
+        "Oops, you can't place that ship there, try again"
+      );
     }
 
     if (player.shipsToPlace.length > 0) {
