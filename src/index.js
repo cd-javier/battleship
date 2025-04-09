@@ -74,18 +74,18 @@ function renderGame(activePlayer, opponent) {
       fleet.appendChild(shipToPlace);
     });
   }
-  
+
   function renderFleet(ship) {
     const shipToPlace = document.createElement('div');
     shipToPlace.classList.add('ship');
     if (ship.sunk) shipToPlace.classList.add('sunk');
-  
+
     for (let i = 0; i < ship.length; i++) {
       const cell = document.createElement('div');
       cell.classList.add('cell');
       shipToPlace.appendChild(cell);
     }
-  
+
     return shipToPlace;
   }
 
@@ -131,6 +131,13 @@ function displayMessage(message) {
   Selector.display.textContent = message;
 }
 
+function displayTemporaryMessage(message) {
+  const currentMessage = Selector.display.textContent;
+
+  displayMessage(message);
+  setTimeout(() => displayMessage(currentMessage), 2000);
+}
+
 function playerTurn() {
   function playerOneEventListener(e) {
     const targetCell = e.target.closest('.gameboard-cell');
@@ -140,7 +147,7 @@ function playerTurn() {
       targetCell.classList.contains('hit') ||
       targetCell.classList.contains('miss')
     ) {
-      displayMessage("You can't his the same cell twice");
+      displayTemporaryMessage("You can't his the same cell twice");
       playerTurn();
       return;
     }
@@ -215,7 +222,7 @@ function placeFleet(player) {
       player.placeShip(y, x);
       renderGame(player1, player2);
     } else {
-      displayMessage("Oops, you can't place that ship there, try again");
+      displayTemporaryMessage("Oops, you can't place that ship there, try again");
     }
 
     if (player.shipsToPlace.length > 0) {
