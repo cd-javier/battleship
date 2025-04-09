@@ -23,55 +23,60 @@ const Selector = (function () {
   };
 })();
 
-function renderGameboard(player, isOpponent) {
-  const board = player.gameboard.board;
-  const target = isOpponent
-    ? Selector.opponentGameboard
-    : Selector.playerGameboard;
+function renderGame(activePlayer, opponent) {
+  function renderGameboard(player, isOpponent) {
+    const board = player.gameboard.board;
+    const target = isOpponent
+      ? Selector.opponentGameboard
+      : Selector.playerGameboard;
 
-  const fleet = isOpponent ? Selector.opponentFleet : Selector.playerFleet;
+    const fleet = isOpponent ? Selector.opponentFleet : Selector.playerFleet;
 
-  target.innerHTML = '';
-  fleet.innerHTML = '';
+    target.innerHTML = '';
+    fleet.innerHTML = '';
 
-  board.flat().forEach((cell) => {
-    const singleCell = document.createElement('div');
-    singleCell.classList.add('gameboard-cell');
-    const [cellY, cellX] = cell.coords;
-    singleCell.dataset.y = cellY;
-    singleCell.dataset.x = cellX;
+    board.flat().forEach((cell) => {
+      const singleCell = document.createElement('div');
+      singleCell.classList.add('gameboard-cell');
+      const [cellY, cellX] = cell.coords;
+      singleCell.dataset.y = cellY;
+      singleCell.dataset.x = cellX;
 
-    if (!isOpponent && cell.content) {
-      singleCell.classList.add('ship');
-    }
+      if (!isOpponent && cell.content) {
+        singleCell.classList.add('ship');
+      }
 
-    if (player.gameboard.isAdjacentToSunk(cell)) {
-      singleCell.classList.add('miss');
-    }
-
-    if (cell.isHit) {
-      if (cell.content) {
-        singleCell.classList.add('hit');
-        if (cell.content.sunk) {
-          singleCell.classList.add('sunk');
-        }
-      } else {
+      if (player.gameboard.isAdjacentToSunk(cell)) {
         singleCell.classList.add('miss');
       }
-    }
 
-    target.appendChild(singleCell);
-  });
+      if (cell.isHit) {
+        if (cell.content) {
+          singleCell.classList.add('hit');
+          if (cell.content.sunk) {
+            singleCell.classList.add('sunk');
+          }
+        } else {
+          singleCell.classList.add('miss');
+        }
+      }
 
-  player.gameboard.ships.forEach((ship) => {
-    fleet.append(renderFleet(ship));
-  });
+      target.appendChild(singleCell);
+    });
 
-  player.shipsToPlace.forEach((ship) => {
-    const shipToPlace = renderFleet(ship);
-    shipToPlace.classList.add('unplaced');
-    fleet.append(shipToPlace);
-  });
+    player.gameboard.ships.forEach((ship) => {
+      fleet.append(renderFleet(ship));
+    });
+
+    player.shipsToPlace.forEach((ship) => {
+      const shipToPlace = renderFleet(ship);
+      shipToPlace.classList.add('unplaced');
+      fleet.append(shipToPlace);
+    });
+  }
+
+  renderGameboard(activePlayer, false);
+  renderGameboard(opponent, true);
 }
 
 function renderFleet(ship) {
@@ -111,7 +116,7 @@ function playerTurn() {
 
     const attack = player2.gameboard.receiveAttack(y, x);
 
-    renderGameboard(player2, true);
+    renderGame(player1, player2);
 
     if (attack) {
       if (player2.gameboard.hasUnsunkShips()) {
@@ -140,7 +145,7 @@ function cpuTurn() {
     cpuTurn();
   }
 
-  renderGameboard(player1, false);
+  renderGame(player1, player2);
 
   if (attack) {
     if (player2.gameboard.hasUnsunkShips()) {
@@ -161,8 +166,7 @@ function cpuGame() {
 
   player2.randomInit();
 
-  renderGameboard(player1, false);
-  renderGameboard(player2, true);
+  renderGame(player1, player2);
   placeFleet(player1);
 }
 
@@ -175,7 +179,7 @@ function placeFleet(player) {
 
     if (player.gameboard.canPlace(y, x, ship.length, true)) {
       player.placeShip(y, x);
-      renderGameboard(player1, false);
+      renderGame(player1, player2);
     } else {
       displayMessage("Oops, you can't place that ship there, try again");
     }
