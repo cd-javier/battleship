@@ -142,14 +142,14 @@ function displayMessage(message) {
   Selector.display.textContent = message;
 }
 
-function displayTemporaryMessage(message) {
+function displayError(message) {
   const currentMessage = Selector.display.textContent;
 
   displayMessage(message);
   setTimeout(() => displayMessage(currentMessage), 2000);
 }
 
-function showModal(message, btnFnc) {
+function showModal(message) {
   Selector.modal.classList.toggle('hidden', false);
   Selector.modalText.textContent = message;
 
@@ -159,7 +159,7 @@ function showModal(message, btnFnc) {
     'click',
     () => {
       Selector.modal.classList.toggle('hidden', true);
-      btnFnc();
+      playerTurn();
     },
     { once: true }
   );
@@ -185,7 +185,7 @@ function playerTurn() {
       targetCell.classList.contains('hit') ||
       targetCell.classList.contains('miss')
     ) {
-      displayTemporaryMessage("You can't his the same cell twice");
+      displayError("You can't his the same cell twice");
       playerTurn();
       return;
     }
@@ -206,9 +206,20 @@ function playerTurn() {
     } else {
       if (gamemode === 'cpu') {
         cpuTurn();
+      } else if (gamemode === 'multi') {
+        setTimeout(switchPlayers, 1000);
       }
     }
   }
+
+  renderGame();
+
+  if (activePlayer.shipsToPlace.length > 0) {
+    placeFleet();
+    return;
+  }
+
+  displayMessage('Attack your opponent');
 
   Selector.opponentGameboard.addEventListener(
     'click',
@@ -255,10 +266,22 @@ function cpuGame() {
   opponent.randomInit();
 
   renderGame();
-  placeFleet(activePlayer);
+  playerTurn();
 }
 
-function placeFleet(player) {
+function multiPlayerGame() {
+  gamemode = 'multi';
+  player1 = new Player();
+  player2 = new Player();
+
+  activePlayer = player1;
+  opponent = player2;
+
+  renderGame();
+  playerTurn();
+}
+
+function placeFleet() {
   let horizontal = true;
 
   Selector.actions.innerHTML = '';
@@ -273,34 +296,41 @@ function placeFleet(player) {
 
   addRestartBtn();
 
+  displayMessage('Place your fleet');
+
   function place(e) {
     const targetCell = e.target.closest('.gameboard-cell');
     const y = targetCell.dataset.y;
     const x = targetCell.dataset.x;
-    const ship = player.shipsToPlace[0];
+    const ship = activePlayer.shipsToPlace[0];
 
-    if (player.gameboard.canPlace(y, x, ship.length, horizontal)) {
-      player.placeShip(y, x, horizontal);
+    if (activePlayer.gameboard.canPlace(y, x, ship.length, horizontal)) {
+      activePlayer.placeShip(y, x, horizontal);
       renderGame();
     } else {
-      displayTemporaryMessage(
-        "Oops, you can't place that ship there, try again"
-      );
+      displayError("Oops, you can't place that ship there, try again");
     }
 
-    if (player.shipsToPlace.length > 0) {
-      placeFleet(player);
-    } else {
-      playerTurn();
+    if (gamemode === 'multi' && activePlayer.shipsToPlace.length === 0) {
+      setTimeout(switchPlayers, 1000);
+      return;
     }
+
+    playerTurn();
   }
 
   Selector.playerGameboard.addEventListener('click', place, { once: true });
 }
 
+function switchPlayers() {
+  [activePlayer, opponent] = [opponent, activePlayer];
+
+  showModal('Give the device to your opponent');
+}
+
 (function () {
   renderMock();
 
-  Selector.startMultiplayer.addEventListener('click', () => {});
+  Selector.startMultiplayer.addEventListener('click', multiPlayerGame);
   Selector.startCPU.addEventListener('click', cpuGame);
 })();
