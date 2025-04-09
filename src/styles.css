@@ -110,6 +110,11 @@ h1 {
   gap: 1px;
 }
 
+.fleet .ship.unplaced .cell {
+  background-color: white;
+  border: 1px solid var(--ship);
+}
+
 .fleet .ship .cell {
   width: 20px;
   height: 20px;

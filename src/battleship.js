@@ -191,12 +191,12 @@ class Player {
   constructor() {
     this.gameboard = new Gameboard();
     this.shipsToPlace = [
-      new Ship(2),
-      new Ship(2),
-      new Ship(3),
-      new Ship(3),
-      new Ship(4),
       new Ship(5),
+      new Ship(4),
+      new Ship(3),
+      new Ship(3),
+      new Ship(2),
+      new Ship(2),
     ];
   }
 
@@ -205,7 +205,7 @@ class Player {
       throw new Error('All ships have been placed');
     }
 
-    const ship = this.shipsToPlace[this.shipsToPlace.length - 1];
+    const ship = this.shipsToPlace[0];
 
     try {
       this.gameboard.placeShip(y, x, ship, isHorizontal);
@@ -213,7 +213,7 @@ class Player {
       throw new Error(error);
     }
 
-    this.shipsToPlace.pop();
+    this.shipsToPlace.shift();
   }
 
   randomInit() {

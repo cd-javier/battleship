@@ -63,14 +63,14 @@ function renderGameboard(player, isOpponent) {
     target.appendChild(singleCell);
   });
 
+  player.gameboard.ships.forEach((ship) => {
+    fleet.append(renderFleet(ship));
+  });
+
   player.shipsToPlace.forEach((ship) => {
     const shipToPlace = renderFleet(ship);
     shipToPlace.classList.add('unplaced');
     fleet.append(shipToPlace);
-  });
-
-  player.gameboard.ships.forEach((ship) => {
-    fleet.append(renderFleet(ship));
   });
 }
 
@@ -113,11 +113,6 @@ function playerTurn() {
 
     renderGameboard(player2, true);
 
-    Selector.opponentGameboard.removeEventListener(
-      'click',
-      playerOneEventListener
-    );
-
     if (attack) {
       if (player2.gameboard.hasUnsunkShips()) {
         playerTurn();
@@ -128,6 +123,7 @@ function playerTurn() {
       cpuTurn();
     }
   }
+
   Selector.opponentGameboard.addEventListener('click', playerOneEventListener, {
     once: true,
   });
@@ -163,14 +159,37 @@ function cpuGame() {
   player1 = new Player();
   player2 = new Player();
 
-  // player1.randomInit();
   player2.randomInit();
 
   renderGameboard(player1, false);
   renderGameboard(player2, true);
-  playerTurn();
+  placeFleet(player1);
+}
+
+function placeFleet(player) {
+  function place(e) {
+    const targetCell = e.target.closest('.gameboard-cell');
+    const y = targetCell.dataset.y;
+    const x = targetCell.dataset.x;
+    const ship = player.shipsToPlace[0];
+
+    if (player.gameboard.canPlace(y, x, ship.length, true)) {
+      player.placeShip(y, x);
+      renderGameboard(player1, false);
+    } else {
+      displayMessage("Oops, you can't place that ship there, try again");
+    }
+
+    if (player.shipsToPlace.length > 0) {
+      placeFleet(player);
+    } else {
+      playerTurn();
+    }
+  }
+
+  Selector.playerGameboard.addEventListener('click', place, { once: true });
 }
 
 let player1, player2;
 
-Selector.startBtn.addEventListener('click', cpuGame);
+cpuGame();
