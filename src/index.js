@@ -65,32 +65,66 @@ function renderGame(activePlayer, opponent) {
     });
 
     player.gameboard.ships.forEach((ship) => {
-      fleet.append(renderFleet(ship));
+      fleet.appendChild(renderFleet(ship));
     });
 
     player.shipsToPlace.forEach((ship) => {
       const shipToPlace = renderFleet(ship);
       shipToPlace.classList.add('unplaced');
-      fleet.append(shipToPlace);
+      fleet.appendChild(shipToPlace);
     });
+  }
+  
+  function renderFleet(ship) {
+    const shipToPlace = document.createElement('div');
+    shipToPlace.classList.add('ship');
+    if (ship.sunk) shipToPlace.classList.add('sunk');
+  
+    for (let i = 0; i < ship.length; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      shipToPlace.appendChild(cell);
+    }
+  
+    return shipToPlace;
   }
 
   renderGameboard(activePlayer, false);
   renderGameboard(opponent, true);
 }
 
-function renderFleet(ship) {
-  const shipToPlace = document.createElement('div');
-  shipToPlace.classList.add('ship');
-  if (ship.sunk) shipToPlace.classList.add('sunk');
+function renderMock() {
+  function renderSingleMock(target) {
+    target.innerHTML = '';
 
-  for (let i = 0; i < ship.length; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    shipToPlace.append(cell);
+    for (let i = 0; i < 100; i++) {
+      const singleCell = document.createElement('div');
+      singleCell.classList.add('gameboard-cell');
+      target.appendChild(singleCell);
+    }
   }
 
-  return shipToPlace;
+  function renderSingleFleet(target) {
+    const fleet = [5, 4, 3, 3, 2, 2];
+
+    fleet.forEach((ship) => {
+      const shipToPlace = document.createElement('div');
+      shipToPlace.classList.add('ship');
+
+      for (let i = 0; i < ship; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        shipToPlace.appendChild(cell);
+      }
+
+      target.appendChild(shipToPlace);
+    });
+  }
+
+  renderSingleMock(Selector.playerGameboard);
+  renderSingleMock(Selector.opponentGameboard);
+  renderSingleFleet(Selector.playerFleet);
+  renderSingleFleet(Selector.opponentFleet);
 }
 
 function displayMessage(message) {
