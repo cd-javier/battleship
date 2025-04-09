@@ -183,6 +183,7 @@ function cpuTurn() {
     attack = player1.gameboard.receiveAttack(y, x);
   } catch {
     cpuTurn();
+    return;
   }
 
   renderGame(player1, player2);
