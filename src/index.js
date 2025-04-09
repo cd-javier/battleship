@@ -11,6 +11,9 @@ const Selector = (function () {
   const opponentGameboard = document.getElementById('opponent-gameboard');
   const opponentFleet = document.getElementById('opponent-fleet');
   const startBtn = document.getElementById('start');
+  const modal = document.getElementById('modal');
+  const modalText = document.getElementById('modal-text');
+  const modalBtn = document.getElementById('modal-btn');
 
   return {
     display,
@@ -20,6 +23,9 @@ const Selector = (function () {
     opponentGameboard,
     opponentFleet,
     startBtn,
+    modal,
+    modalText,
+    modalBtn,
   };
 })();
 
@@ -105,6 +111,7 @@ function renderMock() {
   }
 
   function renderSingleFleet(target) {
+    target.innerHTML = '';
     const fleet = [5, 4, 3, 3, 2, 2];
 
     fleet.forEach((ship) => {
@@ -136,6 +143,22 @@ function displayTemporaryMessage(message) {
 
   displayMessage(message);
   setTimeout(() => displayMessage(currentMessage), 2000);
+}
+
+function showModal(message, btnFnc) {
+  Selector.modal.classList.toggle('hidden', false);
+  Selector.modalText.textContent = message;
+
+  renderMock();
+
+  Selector.modalBtn.addEventListener(
+    'click',
+    () => {
+      Selector.modal.classList.toggle('hidden', true);
+      btnFnc();
+    },
+    { once: true }
+  );
 }
 
 function playerTurn(player, opponent, nextTurnFunc) {
