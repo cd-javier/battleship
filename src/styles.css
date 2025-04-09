@@ -36,7 +36,7 @@ h1 {
 
 .gameplay {
   display: flex;
-  gap: 1rem;
+  gap: 3rem;
 }
 
 .player-wrapper {
@@ -48,9 +48,67 @@ h1 {
   gap: 1rem;
 }
 
+.fleet {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fleet .ship {
+  display: flex;
+  gap: 1px;
+}
+
+.fleet .ship.unplaced .cell {
+  background-color: white;
+  border: 1px solid var(--ship);
+}
+
+.fleet .ship .cell {
+  width: 15px;
+  height: 15px;
+  --bg: var(--ship);
+  background-color: var(--bg);
+}
+
+.fleet .ship.sunk .cell {
+  --bg: var(--hit);
+}
+
+.gameboard-wrapper {
+  display: grid;
+  grid-template-areas: '. coords-x' 'coords-y gameboard';
+}
+
+.coords-x,
+.coords-y {
+  display: flex;
+}
+
+.coords-x .coords,
+.coords-y .coords {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.coords-x {
+  grid-area: coords-x;
+}
+
+.coords-y {
+  grid-area: coords-y;
+
+  flex-direction: column;
+}
+
 .gameboard {
-  width: 500px;
-  height: 500px;
+  grid-area: gameboard;
+
+  width: 400px;
+  height: 400px;
 
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -85,8 +143,8 @@ h1 {
 .gameboard-cell.hit::before {
   content: '';
   background-color: var(--peg);
-  height: 1rem;
-  width: 1rem;
+  height: 0.5rem;
+  width: 0.5rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -98,30 +156,4 @@ h1 {
   --bd-color: var(--hit);
   background-color: var(--hit);
   --peg: white;
-}
-
-.fleet {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.fleet .ship {
-  display: flex;
-  gap: 1px;
-}
-
-.fleet .ship.unplaced .cell {
-  background-color: white;
-  border: 1px solid var(--ship);
-}
-
-.fleet .ship .cell {
-  width: 20px;
-  height: 20px;
-  --bg: var(--ship);
-  background-color: var(--bg);
-}
-
-.fleet .ship.sunk .cell {
-  --bg: var(--hit);
 }
