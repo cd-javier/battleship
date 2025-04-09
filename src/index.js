@@ -177,8 +177,8 @@ function addRestartBtn() {
   });
 }
 
-function playerTurn(player, opponent, nextTurnFunc) {
-  function playerOneEventListener(e) {
+function playerTurn() {
+  function playerTurnEventListener(e) {
     const targetCell = e.target.closest('.gameboard-cell');
 
     if (
@@ -186,7 +186,7 @@ function playerTurn(player, opponent, nextTurnFunc) {
       targetCell.classList.contains('miss')
     ) {
       displayTemporaryMessage("You can't his the same cell twice");
-      playerTurn(player, opponent, nextTurnFunc);
+      playerTurn();
       return;
     }
 
@@ -199,18 +199,24 @@ function playerTurn(player, opponent, nextTurnFunc) {
 
     if (attack) {
       if (opponent.gameboard.hasUnsunkShips()) {
-        playerTurn(player, opponent, nextTurnFunc);
+        playerTurn();
       } else {
         displayMessage('Game over - You win!');
       }
     } else {
-      nextTurnFunc();
+      if (gamemode === 'cpu') {
+        cpuTurn();
+      }
     }
   }
 
-  Selector.opponentGameboard.addEventListener('click', playerOneEventListener, {
-    once: true,
-  });
+  Selector.opponentGameboard.addEventListener(
+    'click',
+    playerTurnEventListener,
+    {
+      once: true,
+    }
+  );
 }
 
 function cpuTurn() {
@@ -234,7 +240,7 @@ function cpuTurn() {
       displayMessage('Game over - Player 2 Wins!');
     }
   } else {
-    playerTurn(player1, player2, cpuTurn);
+    playerTurn();
   }
 }
 
@@ -242,7 +248,7 @@ function cpuGame() {
   gamemode = 'cpu';
   player1 = new Player();
   player2 = new Player();
-  
+
   activePlayer = player1;
   opponent = player2;
 
@@ -285,7 +291,7 @@ function placeFleet(player) {
     if (player.shipsToPlace.length > 0) {
       placeFleet(player);
     } else {
-      playerTurn(player1, player2, cpuTurn);
+      playerTurn();
     }
   }
 
