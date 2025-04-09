@@ -3,6 +3,8 @@ import './styles.css';
 
 import { Player } from './battleship';
 
+let player1, player2, activePlayer, opponent, gamemode;
+
 const Selector = (function () {
   const display = document.getElementById('display');
   const actions = document.getElementById('actions');
@@ -10,7 +12,8 @@ const Selector = (function () {
   const playerFleet = document.getElementById('player-fleet');
   const opponentGameboard = document.getElementById('opponent-gameboard');
   const opponentFleet = document.getElementById('opponent-fleet');
-  const startBtn = document.getElementById('start');
+  const startMultiplayer = document.getElementById('start-multiplayer');
+  const startCPU = document.getElementById('start-cpu');
   const modal = document.getElementById('modal');
   const modalText = document.getElementById('modal-text');
   const modalBtn = document.getElementById('modal-btn');
@@ -22,14 +25,15 @@ const Selector = (function () {
     playerFleet,
     opponentGameboard,
     opponentFleet,
-    startBtn,
+    startMultiplayer,
+    startCPU,
     modal,
     modalText,
     modalBtn,
   };
 })();
 
-function renderGame(activePlayer, opponent) {
+function renderGame() {
   function renderGameboard(player, isOpponent) {
     const board = player.gameboard.board;
     const target = isOpponent
@@ -161,6 +165,18 @@ function showModal(message, btnFnc) {
   );
 }
 
+function addRestartBtn() {
+  const restartBtn = document.createElement('button');
+  Selector.actions.appendChild(restartBtn);
+  restartBtn.textContent = 'Restart';
+
+  restartBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to restart the game?')) {
+      location.reload();
+    }
+  });
+}
+
 function playerTurn(player, opponent, nextTurnFunc) {
   function playerOneEventListener(e) {
     const targetCell = e.target.closest('.gameboard-cell');
@@ -179,7 +195,7 @@ function playerTurn(player, opponent, nextTurnFunc) {
 
     const attack = opponent.gameboard.receiveAttack(y, x);
 
-    renderGame(player, opponent);
+    renderGame();
 
     if (attack) {
       if (opponent.gameboard.hasUnsunkShips()) {
@@ -209,7 +225,7 @@ function cpuTurn() {
     return;
   }
 
-  renderGame(player1, player2);
+  renderGame();
 
   if (attack) {
     if (player2.gameboard.hasUnsunkShips()) {
@@ -223,32 +239,43 @@ function cpuTurn() {
 }
 
 function cpuGame() {
-  Selector.startBtn.textContent = 'RESTART';
-
+  gamemode = 'cpu';
   player1 = new Player();
   player2 = new Player();
+  
+  activePlayer = player1;
+  opponent = player2;
 
-  player2.randomInit();
+  opponent.randomInit();
 
-  // TO TEST
-  player1.randomInit();
-
-  renderGame(player1, player2);
-  // placeFleet(player1);
-
-  playerTurn(player1, player2, cpuTurn);
+  renderGame();
+  placeFleet(activePlayer);
 }
 
 function placeFleet(player) {
+  let horizontal = true;
+
+  Selector.actions.innerHTML = '';
+
+  const verticalBtn = document.createElement('button');
+  verticalBtn.textContent = 'Vertical';
+  Selector.actions.appendChild(verticalBtn);
+  verticalBtn.addEventListener('click', () => {
+    horizontal = !horizontal;
+    verticalBtn.textContent = horizontal ? 'Vertical' : 'Horizontal';
+  });
+
+  addRestartBtn();
+
   function place(e) {
     const targetCell = e.target.closest('.gameboard-cell');
     const y = targetCell.dataset.y;
     const x = targetCell.dataset.x;
     const ship = player.shipsToPlace[0];
 
-    if (player.gameboard.canPlace(y, x, ship.length, true)) {
-      player.placeShip(y, x);
-      renderGame(player1, player2);
+    if (player.gameboard.canPlace(y, x, ship.length, horizontal)) {
+      player.placeShip(y, x, horizontal);
+      renderGame();
     } else {
       displayTemporaryMessage(
         "Oops, you can't place that ship there, try again"
@@ -258,13 +285,16 @@ function placeFleet(player) {
     if (player.shipsToPlace.length > 0) {
       placeFleet(player);
     } else {
-      playerTurn();
+      playerTurn(player1, player2, cpuTurn);
     }
   }
 
   Selector.playerGameboard.addEventListener('click', place, { once: true });
 }
 
-let player1, player2;
+(function () {
+  renderMock();
 
-cpuGame();
+  Selector.startMultiplayer.addEventListener('click', () => {});
+  Selector.startCPU.addEventListener('click', cpuGame);
+})();
