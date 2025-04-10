@@ -146,13 +146,13 @@ function displayMessage(message) {
   Selector.display.textContent = message;
 }
 
-function displayError(message) {
+function displayError(message, time = 2000) {
   Selector.errorModalText.textContent = message;
 
   Selector.errorModal.classList.toggle('hidden', false);
   setTimeout(() => {
     Selector.errorModal.classList.toggle('hidden', true);
-  }, 2000);
+  }, time);
 }
 
 function showModal(message) {
@@ -191,7 +191,7 @@ function playerTurn(placeHorizontal = true) {
       targetCell.classList.contains('hit') ||
       targetCell.classList.contains('miss')
     ) {
-      displayError("You can't his the same cell twice");
+      displayError("Oops! You can't his the same cell twice.", 2000);
       playerTurn();
       return;
     }
@@ -337,7 +337,10 @@ function placeFleet(placeHorizontal = true) {
     } else if (activePlayer.gameboard.canPlace(y, x, ship.length, horizontal)) {
       activePlayer.placeShip(y, x, horizontal);
     } else {
-      displayError("Oops, you can't place that ship there, try again");
+      displayError(
+        'Oops! Ships must stay within bounds, not overlap, or touch each other.',
+        2500
+      );
     }
 
     if (gamemode === 'multi' && activePlayer.shipsToPlace.length === 0) {

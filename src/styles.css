@@ -303,6 +303,8 @@ button {
 .error-modal {
   background-color: var(--hit);
   border: 1px solid var(--dark-red);
+  max-width: 350px;
+  text-align: center;
 }
 
 .hidden {
