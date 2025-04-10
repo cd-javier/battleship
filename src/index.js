@@ -311,9 +311,10 @@ function placeFleet(placeHorizontal = true) {
     const x = targetCell.dataset.x;
     const ship = activePlayer.shipsToPlace[0];
 
-    if (activePlayer.gameboard.canPlace(y, x, ship.length, horizontal)) {
+    if (activePlayer.gameboard.board[y][x].content) {
+      activePlayer.removeShip(activePlayer.gameboard.board[y][x].content);
+    } else if (activePlayer.gameboard.canPlace(y, x, ship.length, horizontal)) {
       activePlayer.placeShip(y, x, horizontal);
-      renderGame();
     } else {
       displayError("Oops, you can't place that ship there, try again");
     }

@@ -216,6 +216,17 @@ class Player {
     this.shipsToPlace.shift();
   }
 
+  removeShip(ship) {
+    this.gameboard.board.flat().forEach((cell) => {
+      if (cell.content === ship) {
+        cell.content = undefined;
+      }
+    });
+
+    this.shipsToPlace.unshift(ship);
+    this.gameboard.ships.splice(this.gameboard.ships.indexOf(ship), 1);
+  }
+
   randomInit() {
     while (this.shipsToPlace.length > 0) {
       const y = Math.floor(Math.random() * 10);
