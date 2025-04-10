@@ -236,6 +236,8 @@ button {
   grid-template-rows: repeat(10, 1fr);
 
   background-color: var(--light);
+
+  border: 0.5px solid var(--primary);
 }
 
 .gameboard-cell {
