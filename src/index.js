@@ -291,6 +291,9 @@ function multiPlayerGame() {
 function placeFleet(placeHorizontal = true) {
   let horizontal = placeHorizontal;
 
+  renderGame();
+  Selector.playerGameboard.addEventListener('click', place, { once: true });
+
   Selector.actions.innerHTML = '';
 
   const verticalBtn = document.createElement('button');
@@ -299,6 +302,24 @@ function placeFleet(placeHorizontal = true) {
   verticalBtn.addEventListener('click', () => {
     horizontal = !horizontal;
     verticalBtn.textContent = horizontal ? 'Vertical' : 'Horizontal';
+  });
+
+  const randomBtn = document.createElement('button');
+  randomBtn.textContent = 'Place randomly';
+  Selector.actions.appendChild(randomBtn);
+  randomBtn.addEventListener('click', () => {
+    activePlayer.randomInit();
+    renderGame();
+
+    if (gamemode === 'multi') {
+      Selector.playerGameboard.removeEventListener('click', place, {
+        once: true,
+      });
+      setTimeout(switchPlayers, 1000);
+      return;
+    }
+
+    playerTurn();
   });
 
   addRestartBtn();
@@ -320,14 +341,13 @@ function placeFleet(placeHorizontal = true) {
     }
 
     if (gamemode === 'multi' && activePlayer.shipsToPlace.length === 0) {
+      renderGame();
       setTimeout(switchPlayers, 1000);
       return;
     }
 
     playerTurn(horizontal);
   }
-
-  Selector.playerGameboard.addEventListener('click', place, { once: true });
 }
 
 function switchPlayers() {
