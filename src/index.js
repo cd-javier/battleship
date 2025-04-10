@@ -183,7 +183,7 @@ function addRestartBtn() {
   });
 }
 
-function playerTurn() {
+function playerTurn(placeHorizontal = true) {
   function playerTurnEventListener(e) {
     const targetCell = e.target.closest('.gameboard-cell');
 
@@ -221,7 +221,7 @@ function playerTurn() {
   renderGame();
 
   if (activePlayer.shipsToPlace.length > 0) {
-    placeFleet();
+    placeFleet(placeHorizontal);
     return;
   }
 
@@ -287,13 +287,13 @@ function multiPlayerGame() {
   playerTurn();
 }
 
-function placeFleet() {
-  let horizontal = true;
+function placeFleet(placeHorizontal = true) {
+  let horizontal = placeHorizontal;
 
   Selector.actions.innerHTML = '';
 
   const verticalBtn = document.createElement('button');
-  verticalBtn.textContent = 'Vertical';
+  verticalBtn.textContent = horizontal ? 'Vertical' : 'Horizontal';
   Selector.actions.appendChild(verticalBtn);
   verticalBtn.addEventListener('click', () => {
     horizontal = !horizontal;
@@ -322,7 +322,7 @@ function placeFleet() {
       return;
     }
 
-    playerTurn();
+    playerTurn(horizontal);
   }
 
   Selector.playerGameboard.addEventListener('click', place, { once: true });
