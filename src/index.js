@@ -227,6 +227,9 @@ function playerTurn(placeHorizontal = true) {
 
   displayMessage('Attack your opponent');
 
+  Selector.actions.innerHTML = '';
+  addRestartBtn();
+
   Selector.opponentGameboard.addEventListener(
     'click',
     playerTurnEventListener,
