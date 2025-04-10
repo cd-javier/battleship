@@ -3,7 +3,7 @@ import './styles.css';
 
 import { Player } from './battleship';
 
-let player1, player2, activePlayer, opponent, gamemode;
+let activePlayer, opponent, gamemode;
 
 const Selector = (function () {
   const display = document.getElementById('display');
@@ -43,7 +43,6 @@ function renderGame() {
     const target = isOpponent
       ? Selector.opponentGameboard
       : Selector.playerGameboard;
-
     const fleet = isOpponent ? Selector.opponentFleet : Selector.playerFleet;
 
     target.innerHTML = '';
@@ -245,7 +244,7 @@ function cpuTurn() {
   let attack;
 
   try {
-    attack = player1.gameboard.receiveAttack(y, x);
+    attack = activePlayer.gameboard.receiveAttack(y, x);
   } catch {
     cpuTurn();
     return;
@@ -254,7 +253,7 @@ function cpuTurn() {
   renderGame();
 
   if (attack) {
-    if (player2.gameboard.hasUnsunkShips()) {
+    if (opponent.gameboard.hasUnsunkShips()) {
       cpuTurn();
     } else {
       displayMessage('Game over - Player 2 Wins!');
@@ -266,11 +265,9 @@ function cpuTurn() {
 
 function cpuGame() {
   gamemode = 'cpu';
-  player1 = new Player();
-  player2 = new Player();
 
-  activePlayer = player1;
-  opponent = player2;
+  activePlayer = new Player();
+  opponent = new Player();
 
   opponent.randomInit();
 
@@ -279,11 +276,9 @@ function cpuGame() {
 
 function multiPlayerGame() {
   gamemode = 'multi';
-  player1 = new Player();
-  player2 = new Player();
 
-  activePlayer = player1;
-  opponent = player2;
+  activePlayer = new Player();
+  opponent = new Player();
 
   playerTurn();
 }
