@@ -271,7 +271,6 @@ function cpuGame() {
 
   opponent.randomInit();
 
-  renderGame();
   playerTurn();
 }
 
@@ -283,7 +282,6 @@ function multiPlayerGame() {
   activePlayer = player1;
   opponent = player2;
 
-  renderGame();
   playerTurn();
 }
 
