@@ -5,6 +5,9 @@ import { Player } from './battleship';
 
 let activePlayer, opponent, gamemode;
 
+// -----------------------------------
+//           DOM SELECTORS
+// -----------------------------------
 const Selector = (function () {
   const display = document.getElementById('display');
   const actions = document.getElementById('actions');
@@ -37,6 +40,9 @@ const Selector = (function () {
   };
 })();
 
+// -----------------------------------
+//           GAME RENDERING
+// -----------------------------------
 function renderGame() {
   function renderGameboard(player, isOpponent) {
     const board = player.gameboard.board;
@@ -49,6 +55,7 @@ function renderGame() {
     fleet.innerHTML = '';
 
     board.flat().forEach((cell) => {
+      // Creates each cell of the gameboard
       const singleCell = document.createElement('div');
       singleCell.classList.add('gameboard-cell');
       const [cellY, cellX] = cell.coords;
@@ -56,10 +63,12 @@ function renderGame() {
       singleCell.dataset.x = cellX;
 
       if (!isOpponent && cell.content) {
+        // Shows where the ships are for the active player
         singleCell.classList.add('ship');
       }
 
       if (player.gameboard.isAdjacentToSunk(cell)) {
+        // Automatically hits cells surrounding sunk ships
         singleCell.classList.add('miss');
       }
 
@@ -111,6 +120,7 @@ function renderMock() {
     target.innerHTML = '';
 
     for (let i = 0; i < 100; i++) {
+      // Populates the gameboard
       const singleCell = document.createElement('div');
       singleCell.classList.add('gameboard-cell');
       target.appendChild(singleCell);
@@ -118,6 +128,7 @@ function renderMock() {
   }
 
   function renderSingleFleet(target) {
+    // Populates the fleets
     target.innerHTML = '';
     const fleet = [5, 4, 3, 3, 2, 2];
 
@@ -126,6 +137,7 @@ function renderMock() {
       shipToPlace.classList.add('ship');
 
       for (let i = 0; i < ship; i++) {
+        // Creates cell of each ship
         const cell = document.createElement('div');
         cell.classList.add('cell');
         shipToPlace.appendChild(cell);
@@ -155,14 +167,17 @@ function displayError(message, time = 2000) {
 }
 
 function showModal(message) {
+  // Shows the modal for the users to turn the device
   Selector.modal.classList.toggle('hidden', false);
   Selector.modalText.textContent = message;
 
+  // Renders mock gameboards and fleets to avoid cheating
   renderMock();
 
   Selector.modalBtn.addEventListener(
     'click',
     () => {
+      // If the button is clicked, the modal is hidden and the turn starts
       Selector.modal.classList.toggle('hidden', true);
       playerTurn();
     },
@@ -177,92 +192,15 @@ function addRestartBtn() {
 
   restartBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to restart the game?')) {
+      // After confirmation, it reloads the page
       location.reload();
     }
   });
 }
 
-function playerTurn(placeHorizontal = true) {
-  function playerTurnEventListener(e) {
-    const targetCell = e.target.closest('.gameboard-cell');
-
-    if (
-      targetCell.classList.contains('hit') ||
-      targetCell.classList.contains('miss')
-    ) {
-      displayError("Oops! You can't his the same cell twice.", 2000);
-      playerTurn();
-      return;
-    }
-
-    const y = targetCell.dataset.y;
-    const x = targetCell.dataset.x;
-
-    const attack = opponent.gameboard.receiveAttack(y, x);
-
-    renderGame();
-
-    if (attack) {
-      if (opponent.gameboard.hasUnsunkShips()) {
-        playerTurn();
-      } else {
-        displayMessage('Game over - You win!');
-      }
-    } else {
-      if (gamemode === 'cpu') {
-        cpuTurn();
-      } else if (gamemode === 'multi') {
-        setTimeout(switchPlayers, 1000);
-      }
-    }
-  }
-
-  renderGame();
-
-  if (activePlayer.shipsToPlace.length > 0) {
-    placeFleet(placeHorizontal);
-    return;
-  }
-
-  displayMessage('Attack your opponent');
-
-  Selector.actions.innerHTML = '';
-  addRestartBtn();
-
-  Selector.opponentGameboard.addEventListener(
-    'mouseup',
-    playerTurnEventListener,
-    {
-      once: true,
-    }
-  );
-}
-
-function cpuTurn() {
-  const y = Math.floor(Math.random() * 10);
-  const x = Math.floor(Math.random() * 10);
-  let attack;
-
-  try {
-    attack = activePlayer.gameboard.receiveAttack(y, x);
-  } catch {
-    cpuTurn();
-    return;
-  }
-
-  renderGame();
-
-  if (attack) {
-    if (opponent.gameboard.hasUnsunkShips()) {
-      cpuTurn();
-    } else {
-      displayMessage('Game over - Player 2 Wins!');
-    }
-  } else {
-    playerTurn();
-  }
-}
-
+// -----------------------------------
+//          GAMEPLAY MODES
+// -----------------------------------
 function cpuGame() {
   gamemode = 'cpu';
 
@@ -283,14 +221,19 @@ function multiPlayerGame() {
   playerTurn();
 }
 
+// -----------------------------------
+//          GAMEPLAY LOGIC
+// -----------------------------------
 function placeFleet(placeHorizontal = true) {
   let horizontal = placeHorizontal;
 
   renderGame();
   Selector.playerGameboard.addEventListener('mouseup', place, { once: true });
 
+  // Populates the action menu
   Selector.actions.innerHTML = '';
 
+  // Toggle horizontal / vertical placement
   const verticalBtn = document.createElement('button');
   verticalBtn.textContent = horizontal ? 'Vertical' : 'Horizontal';
   Selector.actions.appendChild(verticalBtn);
@@ -303,17 +246,23 @@ function placeFleet(placeHorizontal = true) {
   randomBtn.textContent = 'Place randomly';
   Selector.actions.appendChild(randomBtn);
   randomBtn.addEventListener('click', () => {
+    // Sets players game in random order
     activePlayer.randomInit();
+    // Renders gameboard
     renderGame();
 
+    // Removes listener on the gameboard
+    Selector.playerGameboard.removeEventListener('mouseup', place, {
+      once: true,
+    });
+
     if (gamemode === 'multi') {
-      Selector.playerGameboard.removeEventListener('mouseup', place, {
-        once: true,
-      });
+      // If multiplayer, it switches after 1s
       setTimeout(switchPlayers, 1000);
       return;
     }
 
+    // If CPU, it starts the first turn
     playerTurn();
   });
 
@@ -328,10 +277,12 @@ function placeFleet(placeHorizontal = true) {
     const ship = activePlayer.shipsToPlace[0];
 
     if (activePlayer.gameboard.board[y][x].content) {
+      // If the cell clicked contains a ship, it's removed from the board for replacing
       activePlayer.removeShip(activePlayer.gameboard.board[y][x].content);
     } else if (activePlayer.gameboard.canPlace(y, x, ship.length, horizontal)) {
       activePlayer.placeShip(y, x, horizontal);
     } else {
+      // If it's out of bounds, over, or adjacent to another ship, it displays error
       displayError(
         'Oops! Ships must stay within bounds, not overlap, or touch each other.',
         2500
@@ -339,6 +290,7 @@ function placeFleet(placeHorizontal = true) {
     }
 
     if (gamemode === 'multi' && activePlayer.shipsToPlace.length === 0) {
+      // If multiplayer and no more ships to place, it switches players
       renderGame();
       setTimeout(switchPlayers, 1000);
       return;
@@ -348,15 +300,116 @@ function placeFleet(placeHorizontal = true) {
   }
 }
 
+function playerTurn(placeHorizontal = true) {
+  function playerTurnEventListener(e) {
+    const targetCell = e.target.closest('.gameboard-cell');
+
+    if (
+      targetCell.classList.contains('hit') ||
+      targetCell.classList.contains('miss')
+    ) {
+      // If the cell has already been hit, display error and start over
+      displayError("Oops! You can't his the same cell twice.", 2000);
+      playerTurn();
+      return;
+    }
+
+    const y = targetCell.dataset.y;
+    const x = targetCell.dataset.x;
+
+    const attack = opponent.gameboard.receiveAttack(y, x);
+
+    renderGame();
+
+    if (attack) {
+      // If the attack hits a ship
+      if (opponent.gameboard.hasUnsunkShips()) {
+        // And the opponent still has ships to place, start over
+        playerTurn();
+      } else {
+        // If no more ships, end of game
+        displayMessage('Game over - You win!');
+      }
+    } else {
+      // If it's a miss
+      if (gamemode === 'cpu') {
+        // On CPU mode, it's the CPU's turn
+        cpuTurn();
+      } else if (gamemode === 'multi') {
+        // On multiplayer, it switches players
+        setTimeout(switchPlayers, 1000);
+      }
+    }
+  }
+
+  renderGame();
+
+  if (activePlayer.shipsToPlace.length > 0) {
+    // If the game hasn't started yet (not all ships placed) the placeFleet func is called
+    placeFleet(placeHorizontal);
+    return;
+  }
+
+  displayMessage('Attack your opponent');
+
+  Selector.actions.innerHTML = '';
+  addRestartBtn();
+
+  Selector.opponentGameboard.addEventListener(
+    'mouseup',
+    playerTurnEventListener,
+    {
+      once: true,
+    }
+  );
+}
+
+function cpuTurn() {
+  // Gets random coordinates
+  const y = Math.floor(Math.random() * 10);
+  const x = Math.floor(Math.random() * 10);
+  let attack;
+
+  try {
+    // Try to attack a cell
+    attack = activePlayer.gameboard.receiveAttack(y, x);
+  } catch {
+    // If there's an error (the cell has already been hit), start over
+    cpuTurn();
+    return;
+  }
+
+  renderGame();
+
+  if (attack) {
+    // If the attack hits a ship
+    if (activePlayer.gameboard.hasUnsunkShips()) {
+      // If still has unsunk ships, start over
+      cpuTurn();
+    } else {
+      // If not, the game is over
+      displayMessage('Game over - You lose!');
+    }
+  } else {
+    // If the hit misses, it's the player's turn
+    playerTurn();
+  }
+}
+
 function switchPlayers() {
+  // Swaps active player and opponent
   [activePlayer, opponent] = [opponent, activePlayer];
 
+  // Shows the modal to turn the device
   showModal('Give the device to your opponent');
 }
 
+// Automatically on loading
 (function () {
+  // Renders mock gameboards and fleets
   renderMock();
 
+  // Activates listeners on gamemode buttons
   Selector.startMultiplayer.addEventListener('click', multiPlayerGame);
   Selector.startCPU.addEventListener('click', cpuGame);
 })();
