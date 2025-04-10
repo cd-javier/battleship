@@ -231,7 +231,7 @@ function playerTurn(placeHorizontal = true) {
   addRestartBtn();
 
   Selector.opponentGameboard.addEventListener(
-    'click',
+    'mouseup',
     playerTurnEventListener,
     {
       once: true,
@@ -292,7 +292,7 @@ function placeFleet(placeHorizontal = true) {
   let horizontal = placeHorizontal;
 
   renderGame();
-  Selector.playerGameboard.addEventListener('click', place, { once: true });
+  Selector.playerGameboard.addEventListener('mouseup', place, { once: true });
 
   Selector.actions.innerHTML = '';
 
@@ -312,7 +312,7 @@ function placeFleet(placeHorizontal = true) {
     renderGame();
 
     if (gamemode === 'multi') {
-      Selector.playerGameboard.removeEventListener('click', place, {
+      Selector.playerGameboard.removeEventListener('mouseup', place, {
         once: true,
       });
       setTimeout(switchPlayers, 1000);
