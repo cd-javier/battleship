@@ -17,6 +17,8 @@ const Selector = (function () {
   const modal = document.getElementById('modal');
   const modalText = document.getElementById('modal-text');
   const modalBtn = document.getElementById('modal-btn');
+  const errorModal = document.getElementById('error-modal');
+  const errorModalText = document.getElementById('error-modal-text');
 
   return {
     display,
@@ -30,6 +32,8 @@ const Selector = (function () {
     modal,
     modalText,
     modalBtn,
+    errorModal,
+    errorModalText,
   };
 })();
 
@@ -143,10 +147,12 @@ function displayMessage(message) {
 }
 
 function displayError(message) {
-  const currentMessage = Selector.display.textContent;
+  Selector.errorModalText.textContent = message;
 
-  displayMessage(message);
-  setTimeout(() => displayMessage(currentMessage), 2000);
+  Selector.errorModal.classList.toggle('hidden', false);
+  setTimeout(() => {
+    Selector.errorModal.classList.toggle('hidden', true);
+  }, 2000);
 }
 
 function showModal(message) {

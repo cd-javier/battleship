@@ -166,7 +166,8 @@ h1 {
   --peg: white;
 }
 
-.modal {
+.modal,
+.error-modal {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -176,9 +177,16 @@ h1 {
   flex-direction: column;
   gap: 1rem;
 
-  padding: 2rem;
+  padding: 1.5rem 2rem;
+  border-radius: 0.25rem;
+}
 
+.modal {
   background-color: white;
+}
+
+.error-modal {
+  background-color: var(--hit);
 }
 
 .hidden {
