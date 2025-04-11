@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable no-undef */
-import { Ship, Cell, Gameboard, Player } from './battleship';
+import { Ship, Cell, Gameboard, Player, CPUPlayer } from './battleship';
 
 describe('Ship class', () => {
   describe('Length 1', () => {
@@ -9,11 +9,11 @@ describe('Ship class', () => {
       ship = new Ship(1);
     });
 
-    test("Shows it isn't sank before being hit", () => {
+    test("Shows it isn't sunk before being hit", () => {
       expect(ship.sunk).toBe(false);
     });
 
-    test('Shows it is sank after being hit once', () => {
+    test('Shows it is sunk after being hit once', () => {
       ship.hit();
       expect(ship.sunk).toBe(true);
     });
@@ -21,7 +21,7 @@ describe('Ship class', () => {
     test("Doesn't allow it to be hit once it's sunk", () => {
       ship.hit();
       expect(() => ship.hit()).toThrow(
-        "This ship has already been sank and can't be hit again"
+        "This ship has already been sunk and can't be hit again"
       );
     });
   });
@@ -32,16 +32,16 @@ describe('Ship class', () => {
       ship = new Ship(2);
     });
 
-    test("Shows it isn't sank before being hit", () => {
+    test("Shows it isn't sunk before being hit", () => {
       expect(ship.sunk).toBe(false);
     });
 
-    test("Shows it isn't sank after being hit once", () => {
+    test("Shows it isn't sunk after being hit once", () => {
       ship.hit();
       expect(ship.sunk).toBe(false);
     });
 
-    test('Shows it is sank after being hit twice', () => {
+    test('Shows it is sunk after being hit twice', () => {
       ship.hit();
       ship.hit();
       expect(ship.sunk).toBe(true);
@@ -51,7 +51,7 @@ describe('Ship class', () => {
       ship.hit();
       ship.hit();
       expect(() => ship.hit()).toThrow(
-        "This ship has already been sank and can't be hit again"
+        "This ship has already been sunk and can't be hit again"
       );
     });
   });
@@ -62,22 +62,22 @@ describe('Ship class', () => {
       ship = new Ship(3);
     });
 
-    test("Shows it isn't sank before being hit", () => {
+    test("Shows it isn't sunk before being hit", () => {
       expect(ship.sunk).toBe(false);
     });
 
-    test("Shows it isn't sank after being hit once", () => {
+    test("Shows it isn't sunk after being hit once", () => {
       ship.hit();
       expect(ship.sunk).toBe(false);
     });
 
-    test("Shows it isn't sank after being hit twice", () => {
+    test("Shows it isn't sunk after being hit twice", () => {
       ship.hit();
       ship.hit();
       expect(ship.sunk).toBe(false);
     });
 
-    test('Shows it is sank after being hit three times', () => {
+    test('Shows it is sunk after being hit three times', () => {
       ship.hit();
       ship.hit();
       ship.hit();
@@ -89,7 +89,7 @@ describe('Ship class', () => {
       ship.hit();
       ship.hit();
       expect(() => ship.hit()).toThrow(
-        "This ship has already been sank and can't be hit again"
+        "This ship has already been sunk and can't be hit again"
       );
     });
   });
@@ -469,5 +469,32 @@ describe('Player class', () => {
         'All ships have been placed'
       );
     });
+  });
+});
+
+describe('CPUPlayer class', () => {
+  let cpuPlayer;
+
+  beforeEach(() => {
+    cpuPlayer = new CPUPlayer();
+  });
+
+  test('probabilityBoard initialized correctly', () => {
+    expect(cpuPlayer.probBoard.board.flat().length).toBe(100);
+  });
+
+  test('Correctly records missed shots', () => {
+    cpuPlayer.probBoard.miss(1, 2);
+    cpuPlayer.probBoard.miss(7, 9);
+
+    expect(cpuPlayer.probBoard.board[1][2].probability).toBe(-1);
+    expect(cpuPlayer.probBoard.board[7][9].probability).toBe(-1);
+  });
+
+  test('getNextHit returns an array of coordinates', () => {
+    expect(cpuPlayer.probBoard.getNextHit()).toBeInstanceOf(Array);
+    expect(cpuPlayer.probBoard.getNextHit()).not.toEqual(
+      cpuPlayer.probBoard.getNextHit()
+    );
   });
 });

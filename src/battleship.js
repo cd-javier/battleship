@@ -1,4 +1,6 @@
 /* eslint-disable quotes */
+import { ProbabilityBoard } from './probability-board';
+
 class Ship {
   constructor(length) {
     this.length = length;
@@ -280,4 +282,11 @@ class Player {
   }
 }
 
-export { Ship, Cell, Gameboard, Player };
+class CPUPlayer extends Player {
+  constructor() {
+    super();
+    this.probBoard = new ProbabilityBoard();
+  }
+}
+
+export { Ship, Cell, Gameboard, Player, CPUPlayer };
