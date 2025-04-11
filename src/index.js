@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 import './styles.css';
 
-import { Player } from './battleship';
+import { Player, CPUPlayer } from './battleship';
 
 let activePlayer, opponent, gamemode;
 
@@ -205,7 +205,7 @@ function cpuGame() {
   gamemode = 'cpu';
 
   activePlayer = new Player();
-  opponent = new Player();
+  opponent = new CPUPlayer();
 
   opponent.randomInit();
 
@@ -334,7 +334,8 @@ function playerTurn(placeHorizontal = true) {
       // If it's a miss
       if (gamemode === 'cpu') {
         // On CPU mode, it's the CPU's turn
-        cpuTurn();
+        displayMessage("CPU's turn");
+        setTimeout(cpuTurn, 1000);
       } else if (gamemode === 'multi') {
         // On multiplayer, it switches players
         setTimeout(switchPlayers, 1000);
@@ -350,7 +351,7 @@ function playerTurn(placeHorizontal = true) {
     return;
   }
 
-  displayMessage('Attack your opponent');
+  displayMessage('Your turn - Attack your opponent');
 
   Selector.actions.innerHTML = '';
   addRestartBtn();
@@ -365,33 +366,39 @@ function playerTurn(placeHorizontal = true) {
 }
 
 function cpuTurn() {
-  // Gets random coordinates
-  const y = Math.floor(Math.random() * 10);
-  const x = Math.floor(Math.random() * 10);
-  let attack;
+  // Get coordinates of the attack
+  const [y, x] = opponent.probBoard.getNextHit();
 
-  try {
-    // Try to attack a cell
-    attack = activePlayer.gameboard.receiveAttack(y, x);
-  } catch {
-    // If there's an error (the cell has already been hit), start over
-    cpuTurn();
-    return;
-  }
+  // Perform the attack
+  const attack = activePlayer.gameboard.receiveAttack(y, x);
 
   renderGame();
 
   if (attack) {
     // If the attack hits a ship
-    if (activePlayer.gameboard.hasUnsunkShips()) {
-      // If still has unsunk ships, start over
-      cpuTurn();
-    } else {
-      // If not, the game is over
+
+    if (!activePlayer.gameboard.hasUnsunkShips()) {
+      // If the player doesn't have any more ships to sink the game is over
       displayMessage('Game over - You lose!');
+      return;
     }
+
+    // Records it on the probBoard
+    opponent.probBoard.hit(y, x);
+
+    if (activePlayer.gameboard.board[y][x].content.sunk) {
+      // If the ship that has just been hit has been sunk
+      // Restarts the probBoard accordingly
+      opponent.probBoard.sunkShip();
+    }
+
+    setTimeout(cpuTurn, 1000);
   } else {
-    // If the hit misses, it's the player's turn
+    // If the attack misses
+    // Records it on the probBoard
+    opponent.probBoard.miss(y, x);
+
+    // And it's the player's turn
     playerTurn();
   }
 }
