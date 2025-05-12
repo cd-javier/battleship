@@ -68,6 +68,8 @@ body {
   align-items: center;
   gap: 1rem;
 
+  min-height: 100svh;
+
   padding: 1rem;
 }
 
@@ -310,4 +312,15 @@ button {
 
 .hidden {
   visibility: hidden;
+}
+
+.signature {
+  font-size: 0.75rem;
+  font-weight: 200;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.signature a {
+  color: inherit;
 }
