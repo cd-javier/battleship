@@ -97,8 +97,15 @@ class ProbabilityBoard {
       .sort((a, b) => b.probability - a.probability);
 
     if (cellsInOrder[0].probability > 0) {
-      // If there is any with higher than 0 probability, returns its coordinates
-      return cellsInOrder[0].coords;
+      // If there is any with higher than 0 probability, creates an array with the highest probability
+      const highestProbability = cellsInOrder.filter((cell) => {
+        return cell.probability === cellsInOrder[0].probability;
+      });
+
+      const randomIndex = Math.floor(Math.random() * highestProbability.length);
+
+      // Returns a random one
+      return highestProbability[randomIndex].coords;
     }
 
     // Filters out hit cells
